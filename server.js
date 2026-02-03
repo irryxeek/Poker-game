@@ -90,6 +90,9 @@ io.on('connection', (socket) => {
 // 托管当前目录下的静态文件(用于访问 index.html)
 app.use(express.static(__dirname));
 
-http.listen(3000, () => {
-    console.log('服务器已启动: http://localhost:3000');
+// 修改后的代码：
+const PORT = process.env.PORT || 3000; // 如果Render提供了端口就用它的，否则用3000
+
+http.listen(PORT, () => {
+    console.log(`服务器正在监听端口: ${PORT}`);
 });
