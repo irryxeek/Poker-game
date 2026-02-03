@@ -2,109 +2,295 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>极简德州扑克</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>德州扑克 Pro</title>
     <style>
-        body { font-family: sans-serif; background: #205c36; color: white; text-align: center; }
-        .table { margin-top: 50px; }
-        .card { background: white; color: black; padding: 5px 10px; border-radius: 4px; margin: 2px; display: inline-block; font-weight: bold;}
-        .player { border: 2px solid #ddd; display: inline-block; padding: 10px; margin: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); }
-        .my-seat { border-color: yellow; background: rgba(0,0,0,0.6); }
-        #controls { margin-top: 20px; }
-        button { padding: 10px 20px; cursor: pointer; font-size: 16px; }
+        /* --- 基础样式 --- */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background: #205c36; /* 经典的牌桌绿 */
+            color: white; 
+            text-align: center; 
+            margin: 0; 
+            padding-bottom: 80px; /* 给底部操作栏留空间 */
+            overflow-x: hidden;
+        }
+
+        /* --- 登录页 --- */
+        #login-screen {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; background: rgba(0,0,0,0.8);
+        }
+        input { padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; text-align: center;}
+        .btn-start { padding: 10px 20px; font-size: 18px; background: #f1c40f; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer; color: #333; font-weight: bold;}
+
+        /* --- 游戏区 --- */
+        .info-board { background: rgba(0,0,0,0.3); padding: 10px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .pot-text { font-size: 24px; color: #f1c40f; font-weight: bold; text-shadow: 1px 1px 2px black;}
+        
+        /* 公共牌 */
+        #community-cards { min-height: 60px; margin: 10px 0; display: flex; justify-content: center; gap: 5px; }
+        
+        /* 扑克牌通用样式 */
+        .card { 
+            background: white; color: black; 
+            padding: 6px 10px; border-radius: 6px; 
+            font-weight: bold; font-size: 18px; 
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5); 
+            display: inline-block; min-width: 20px;
+        }
+
+        /* --- 玩家区域 --- */
+        #players-area { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px;}
+        
+        .player { 
+            position: relative;
+            border: 2px solid rgba(255,255,255,0.1); 
+            background: rgba(0,0,0,0.4); 
+            padding: 10px; border-radius: 10px; 
+            width: 42%; /* 手机上一行两个 */
+            max-width: 150px;
+            transition: all 0.3s;
+        }
+        
+        /* 状态修饰 */
+        .active-turn { border-color: #f1c40f; box-shadow: 0 0 15px rgba(241, 196, 15, 0.6); background: rgba(241, 196, 15, 0.1); transform: scale(1.05); z-index: 10;}
+        .folded { opacity: 0.5; filter: grayscale(100%); }
+        .winner { border-color: #e74c3c; box-shadow: 0 0 20px #e74c3c; }
+
+        /* 庄家按钮 (Dealer Button) */
+        .dealer-btn { 
+            position: absolute; top: -10px; right: -10px; 
+            background: white; color: black; border: 2px solid orange; 
+            width: 20px; height: 20px; line-height: 20px; 
+            border-radius: 50%; font-size: 12px; font-weight: bold;
+            box-shadow: 1px 1px 3px black;
+        }
+
+        /* 玩家信息细节 */
+        .p-name { font-weight: bold; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .p-chips { color: #2ecc71; font-size: 14px; margin: 2px 0; }
+        .p-bet { background: rgba(0,0,0,0.3); border-radius: 10px; font-size: 12px; padding: 2px 8px; display: inline-block; margin-bottom: 5px; color: #ddd;}
+
+        /* --- 底部操作栏 --- */
+        #controls-bar { 
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: rgba(0,0,0,0.9); padding: 15px 10px; 
+            box-sizing: border-box; 
+            display: flex; justify-content: space-around; align-items: center;
+            border-top: 1px solid #444;
+            z-index: 100;
+        }
+        
+        /* 按钮通用 */
+        .action-btn { padding: 12px 0; width: 30%; border-radius: 8px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; color: white;}
+        .btn-fold { background: #e74c3c; } /* 红 */
+        .btn-check { background: #3498db; } /* 蓝 */
+        .btn-call { background: #2ecc71; } /* 绿 */
+        .btn-raise { background: #f39c12; } /* 橙 */
+
+        /* 加注输入区 */
+        .raise-group { display: flex; flex-direction: column; width: 30%; gap: 5px; }
+        .raise-input { width: 100%; box-sizing: border-box; padding: 5px; border-radius: 4px; border: 1px solid #aaa; color: black; text-align: center; font-weight: bold;}
+
+        /* 系统消息 */
+        #logs { font-size: 12px; color: #aaa; max-height: 80px; overflow-y: auto; margin: 10px; text-align: left; background: rgba(0,0,0,0.2); padding: 5px;}
     </style>
 </head>
 <body>
 
-    <h1>多人联机德州扑克 (极简版)</h1>
-    
     <div id="login-screen">
-        <input type="text" id="nickname" placeholder="输入昵称" />
-        <button onclick="joinGame()">入座</button>
+        <h1 style="color:#f1c40f; text-shadow: 2px 2px 0 #000;">德州扑克</h1>
+        <input type="text" id="nickname" placeholder="输入昵称 (例如: 赌神)">
+        <button class="btn-start" onclick="joinGame()">入座</button>
     </div>
 
     <div id="game-screen" style="display:none;">
-        <div class="table">
-            <h3>公共牌区域</h3>
-            <div id="community-cards">等待开局...</div>
+        
+        <div class="info-board">
+            <div style="font-size: 12px; color: #ccc;">当前阶段: <span id="stage-name" style="color:#fff; font-weight:bold;">等待开始</span></div>
+            <div class="pot-text">底池: <span id="pot-num">0</span></div>
+            <div id="community-cards"></div>
         </div>
 
         <div id="players-area">
             </div>
 
-        <div id="controls">
-            <button onclick="startGame()">开始发牌 (管理员)</button>
+        <div id="logs"></div>
+
+        <div style="margin-top: 20px; opacity: 0.6;">
+            <button onclick="socket.emit('start_game')" style="padding:5px 10px; background:#555; border:none; color:white; border-radius:4px;">🔄 重新/开始游戏</button>
         </div>
-        
-        <div id="logs" style="margin-top:20px; color:#aaa;"></div>
+
+        <div id="controls-bar" style="display:none;">
+            <button class="action-btn btn-fold" onclick="sendAction('fold')">弃牌</button>
+            
+            <button id="btn-call-check" class="action-btn btn-check" onclick="handleCallCheck()">过牌</button>
+            
+            <div class="raise-group">
+                <input type="number" id="raise-amount" class="raise-input" placeholder="数额">
+                <button class="action-btn btn-raise" style="width:100%; padding: 5px 0;" onclick="handleRaise()">加注</button>
+            </div>
+        </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
         let myId = null;
+        let currentState = null; // 本地缓存状态
 
-        // 1. 入座逻辑
+        // --- 基础连接逻辑 ---
+        socket.on('connect', () => { myId = socket.id; });
+
         function joinGame() {
             const name = document.getElementById('nickname').value;
-            if(!name) return alert('请输入名字');
-            
+            if(!name) return alert("请输入昵称");
             socket.emit('join', name);
-            
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'block';
         }
 
-        // 2. 监听连接成功，记录自己的ID
-        socket.on('connect', () => {
-            myId = socket.id;
-        });
-
-        // 3. 核心：监听服务器状态更新，重绘界面
+        // --- 核心：UI 渲染 ---
         socket.on('update_state', (state) => {
-            renderPlayers(state.players);
-            renderCommunity(state.communityCards);
-        });
+            currentState = state; // 更新本地缓存
 
-        socket.on('system_msg', (msg) => {
-            const log = document.getElementById('logs');
-            log.innerHTML = `<p>${msg}</p>` + log.innerHTML;
-        });
+            // 1. 更新顶部信息
+            document.getElementById('pot-num').innerText = state.pot;
+            document.getElementById('stage-name').innerText = translateStage(state.stage);
+            
+            const commDiv = document.getElementById('community-cards');
+            commDiv.innerHTML = state.communityCards.map(c => renderCard(c)).join('');
 
-        // 发送开始指令
-        function startGame() {
-            socket.emit('start_game');
-        }
+            // 2. 渲染所有玩家
+            const pArea = document.getElementById('players-area');
+            pArea.innerHTML = '';
 
-        // 渲染逻辑
-        function renderPlayers(players) {
-            const container = document.getElementById('players-area');
-            container.innerHTML = '';
-
-            players.forEach(p => {
+            state.players.forEach((p, index) => {
                 const isMe = p.id === myId;
-                // 如果是自己，显示手牌；如果是别人，显示背面 "🂠"
-                const handHtml = (isMe && p.hand.length > 0) 
-                    ? p.hand.map(c => `<span class="card">${c}</span>`).join('') 
-                    : (p.hand.length > 0 ? '🂠 🂠' : '等待中');
+                const isTurn = index === state.activeSeat; // 是否轮到该人
+                const isDealer = index === state.dealerSeat;
 
-                const html = `
-                    <div class="player ${isMe ? 'my-seat' : ''}">
-                        <div><strong>${p.name}</strong></div>
-                        <div>筹码: ${p.chips}</div>
+                // 2.1 渲染手牌 (仅自己或摊牌时可见)
+                let handHtml = '';
+                if (p.hand && p.hand.length > 0) {
+                    if (isMe || state.stage === 'showdown') {
+                        handHtml = p.hand.map(c => renderCard(c, true)).join('');
+                    } else {
+                        handHtml = '<span class="card" style="background:#555; color:#ccc;">🂠</span><span class="card" style="background:#555; color:#ccc;">🂠</span>';
+                    }
+                } else {
+                    handHtml = '<span style="font-size:12px; color:#aaa;">等待中</span>';
+                }
+
+                // 2.2 构建 HTML
+                const playerHtml = `
+                    <div class="player ${isTurn ? 'active-turn' : ''} ${p.folded ? 'folded' : ''}">
+                        ${isDealer ? '<div class="dealer-btn">D</div>' : ''}
+                        <div class="p-name">${p.name}</div>
+                        <div class="p-chips">💰 ${p.chips}</div>
+                        <div class="p-bet">本轮下注: ${p.bet}</div>
                         <div style="margin-top:5px;">${handHtml}</div>
                     </div>
                 `;
-                container.innerHTML += html;
+                pArea.innerHTML += playerHtml;
+
+                // 3. 更新操作栏状态 (仅针对自己)
+                if (isMe) {
+                    const controls = document.getElementById('controls-bar');
+                    if (isTurn) {
+                        controls.style.display = 'flex'; // 显示操作栏
+                        updateButtonLogic(p, state.currentMaxBet);
+                    } else {
+                        controls.style.display = 'none';
+                    }
+                }
             });
+        });
+
+        // --- 辅助逻辑 ---
+
+        // 渲染单张扑克牌
+        function renderCard(cardCode, isHand=false) {
+            // 解析花色颜色：h(红桃)/d(方片)为红，s(黑桃)/c(梅花)为黑
+            const suit = cardCode.slice(-1); 
+            const rank = cardCode.slice(0, -1);
+            const color = (suit === 'h' || suit === 'd') ? '#e74c3c' : 'black';
+            
+            // 将字母转为图形
+            const suitIcons = {'s':'♠', 'h':'♥', 'd':'♦', 'c':'♣'};
+            
+            return `<span class="card" style="color:${color}; ${isHand ? 'border:1px solid gold;' : ''}">
+                ${rank}${suitIcons[suit]}
+            </span>`;
         }
-        
-        function renderCommunity(cards) {
-            const el = document.getElementById('community-cards');
-            if(cards.length === 0) {
-                el.innerHTML = '等待开局...';
-            } else {
-                el.innerHTML = cards.map(c => `<span class="card">${c}</span>`).join('');
+
+        // 动态更新按钮 (Check 还是 Call?)
+        function updateButtonLogic(me, maxBet) {
+            const btn = document.getElementById('btn-call-check');
+            const diff = maxBet - me.bet;
+            
+            // 更新输入框默认值 (最小加注: 当前最大注 + 20)
+            const minRaise = maxBet + 20;
+            const input = document.getElementById('raise-amount');
+            // 只有当输入框没被用户修改过时，才自动更新建议值，防止用户输入一半被覆盖
+            if (document.activeElement !== input) {
+                input.value = minRaise; 
             }
+
+            if (diff > 0) {
+                // 需要跟注
+                btn.innerText = `跟注 ${diff}`;
+                btn.className = "action-btn btn-call";
+                btn.dataset.action = "call"; // 标记当前功能
+            } else {
+                // 可以过牌
+                btn.innerText = "过牌 (Check)";
+                btn.className = "action-btn btn-check";
+                btn.dataset.action = "check";
+            }
+        }
+
+        // --- 按钮点击事件 ---
+
+        function handleCallCheck() {
+            const btn = document.getElementById('btn-call-check');
+            const action = btn.dataset.action; // 'call' or 'check'
+            socket.emit('action', { type: action });
+        }
+
+        function handleRaise() {
+            const val = document.getElementById('raise-amount').value;
+            if (!val) return;
+            socket.emit('action', { type: 'raise', amount: parseInt(val) });
+        }
+
+        function sendAction(type) {
+            socket.emit('action', { type: type });
+        }
+
+        // --- 消息与翻译 ---
+
+        socket.on('system_msg', (msg) => {
+            const logDiv = document.getElementById('logs');
+            const time = new Date().toTimeString().split(' ')[0];
+            logDiv.innerHTML = `<div><span style="color:#aaa">[${time}]</span> ${msg}</div>` + logDiv.innerHTML;
+        });
+
+        socket.on('game_over', (winners) => {
+            alert(`🎉 本局结束！\n\n${winners.join('\n')}`);
+        });
+
+        function translateStage(stage) {
+            const map = {
+                'waiting': '等待开始',
+                'preflop': '翻牌前 (Pre-flop)',
+                'flop': '翻牌圈 (Flop)',
+                'turn': '转牌圈 (Turn)',
+                'river': '河牌圈 (River)',
+                'showdown': '摊牌结算'
+            };
+            return map[stage] || stage;
         }
     </script>
 </body>
