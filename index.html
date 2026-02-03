@@ -93,6 +93,14 @@
         .raise-group { display: flex; flex-direction: column; width: 30%; gap: 5px; }
         .raise-input { width: 100%; box-sizing: border-box; padding: 5px; border-radius: 4px; border: 1px solid #aaa; color: black; text-align: center; font-weight: bold;}
 
+        /* 在 style 标签里增加 */
+        .winning-card {
+            border: 2px solid #f1c40f !important; /* 金色边框 */
+            box-shadow: 0 0 10px #f1c40f !important; /* 金色发光 */
+            transform: translateY(-5px); /* 稍微上浮 */
+            z-index: 100;
+        }
+        
         /* 系统消息 */
         #logs { font-size: 12px; color: #aaa; max-height: 80px; overflow-y: auto; margin: 10px; text-align: left; background: rgba(0,0,0,0.2); padding: 5px;}
     </style>
@@ -138,7 +146,8 @@
     <script>
         const socket = io();
         let myId = null;
-        let currentState = null; // 本地缓存状态
+        let currentState = null; 
+        let currentWinners = null; // 保存本局获胜信息
 
         // --- 基础连接逻辑 ---
         socket.on('connect', () => { myId = socket.id; });
@@ -154,6 +163,12 @@
         // --- 核心：UI 渲染 ---
         socket.on('update_state', (state) => {
             currentState = state; // 更新本地缓存
+            
+            // 如果新的一局开始了(preflop)，清空上局赢家信息
+            if (state.stage === 'preflop' || state.stage === 'waiting') {
+                currentWinners = null;
+                document.getElementById('winner-overlay')?.remove(); // 移除结算弹窗
+            }
 
             // 1. 更新顶部信息
             document.getElementById('pot-num').innerText = state.pot;
@@ -171,10 +186,13 @@
                 const isTurn = index === state.activeSeat; // 是否轮到该人
                 const isDealer = index === state.dealerSeat;
 
-                // 2.1 渲染手牌 (仅自己或摊牌时可见)
+                // 2.1 渲染手牌 
+                // 如果是 showdown 阶段，且服务器已经下发了 winnerInfo，我们需要确保能看到所有未弃牌玩家的手牌
+                // (Server端通常会在 showdown 时把 hand 发送给所有人)
                 let handHtml = '';
                 if (p.hand && p.hand.length > 0) {
-                    if (isMe || state.stage === 'showdown') {
+                    // 自己、摊牌阶段、或已经结束
+                    if (isMe || state.stage === 'showdown' || currentWinners) {
                         handHtml = p.hand.map(c => renderCard(c, true)).join('');
                     } else {
                         handHtml = '<span class="card" style="background:#555; color:#ccc;">🂠</span><span class="card" style="background:#555; color:#ccc;">🂠</span>';
@@ -199,28 +217,30 @@
                 if (isMe) {
                     const controls = document.getElementById('controls-bar');
                     if (isTurn) {
-                        controls.style.display = 'flex'; // 显示操作栏
+                        controls.style.display = 'flex'; 
                         updateButtonLogic(p, state.currentMaxBet);
                     } else {
                         controls.style.display = 'none';
                     }
                 }
             });
+
+            // 如果处于结算状态，重新应用高亮 (防止 render 覆盖)
+            if (currentWinners) {
+                applyWinningEffects(currentWinners);
+            }
         });
 
         // --- 辅助逻辑 ---
 
-        // 渲染单张扑克牌
+        // 渲染单张扑克牌 (增加 data-code 以便查找)
         function renderCard(cardCode, isHand=false) {
-            // 解析花色颜色：h(红桃)/d(方片)为红，s(黑桃)/c(梅花)为黑
             const suit = cardCode.slice(-1); 
             const rank = cardCode.slice(0, -1);
             const color = (suit === 'h' || suit === 'd') ? '#e74c3c' : 'black';
-            
-            // 将字母转为图形
             const suitIcons = {'s':'♠', 'h':'♥', 'd':'♦', 'c':'♣'};
             
-            return `<span class="card" style="color:${color}; ${isHand ? 'border:1px solid gold;' : ''}">
+            return `<span class="card" data-code="${cardCode}" style="color:${color}; ${isHand ? 'border:1px solid gold;' : ''}">
                 ${rank}${suitIcons[suit]}
             </span>`;
         }
@@ -230,19 +250,31 @@
             const btn = document.getElementById('btn-call-check');
             const diff = maxBet - me.bet;
             
-            // 更新输入框默认值 (最小加注: 当前最大注 + 20)
-            const minRaise = maxBet + 20;
+            // 更新输入框默认值 (最小加注: 当前最大注 + 最小加注额)
+            // gameState.minRaise 存在 state 中 (如果没有传，默认 20)
+            const minRaiseVal = currentState.minRaise || 20;
+            const targetTotal = maxBet + minRaiseVal;
+            
             const input = document.getElementById('raise-amount');
             // 只有当输入框没被用户修改过时，才自动更新建议值，防止用户输入一半被覆盖
             if (document.activeElement !== input) {
-                input.value = minRaise; 
+                input.value = targetTotal; 
             }
 
             if (diff > 0) {
-                // 需要跟注
-                btn.innerText = `跟注 ${diff}`;
-                btn.className = "action-btn btn-call";
-                btn.dataset.action = "call"; // 标记当前功能
+            
+                // 如果是 All-in (钱不够跟)
+                if (me.chips <= diff) {
+                    btn.innerText = `All-in (${me.chips})`;
+                    btn.className = "action-btn btn-raise"; // 用红色或橙色醒目
+                    btn.dataset.action = "call"; // 依然是 call逻辑
+                } else {
+                    // 需要跟注
+                    btn.innerText = `跟注 ${diff}`;
+                    btn.className = "action-btn btn-call";
+                    btn.dataset.action = "call"; 
+                }
+
             } else {
                 // 可以过牌
                 btn.innerText = "过牌 (Check)";
@@ -278,8 +310,64 @@
         });
 
         socket.on('game_over', (winners) => {
-            alert(`🎉 本局结束！\n\n${winners.join('\n')}`);
+            // 简单胜利(弃牌)
+            showWinnerOverlay(winners.join('\n'), []);
         });
+
+        socket.on('game_over_details', (winnerInfo) => {
+            currentWinners = winnerInfo; // 保存下来，render 时会用到
+            
+            const msgLines = winnerInfo.map(w => `🏆 ${w.name} ${w.desc ? '('+w.desc+')' : ''} +${w.chips || ''}`);
+            showWinnerOverlay(msgLines.join('<br>'), winnerInfo);
+            
+            applyWinningEffects(winnerInfo);
+        });
+
+        function showWinnerOverlay(msgHtml, winnerInfo) {
+            // 避免重复创建
+            if (document.getElementById('winner-overlay')) return;
+
+            const div = document.createElement('div');
+            div.id = 'winner-overlay';
+            div.style.cssText = `
+                position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
+                background: rgba(0,0,0,0.9); border: 2px solid gold; padding: 20px;
+                text-align: center; border-radius: 10px; z-index: 2000; min-width: 200px;
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+                animation: popin 0.5s ease;
+            `;
+            div.innerHTML = `
+                <h2 style="color:gold; margin:0 0 10px 0;">🎉 结算 🎉</h2>
+                <div style="font-size:18px; line-height:1.5;">${msgHtml}</div>
+                <div style="margin-top:15px; font-size:12px; color:#aaa;">等待开始下一局...</div>
+            `;
+            document.body.appendChild(div);
+
+            // 增加简单的 css 动画
+            const style = document.createElement('style');
+            style.innerHTML = `@keyframes popin { from { transform: translate(-50%, -50%) scale(0.5); opacity:0;} to { transform: translate(-50%, -50%) scale(1); opacity:1;} }`;
+            document.head.appendChild(style);
+        }
+
+        function applyWinningEffects(winnerInfo) {
+            if (!winnerInfo) return;
+            const allCards = Array.from(document.querySelectorAll('.card'));
+            
+            // 1. 先移除所有旧的高亮
+            allCards.forEach(c => c.classList.remove('winning-card'));
+
+            // 2. 遍历赢家
+            winnerInfo.forEach(w => {
+                const winningCodes = w.cards || [];
+                // 3. 遍历 DOM 里的每一张牌
+                allCards.forEach(cardEl => {
+                    const code = cardEl.dataset.code;
+                    if (winningCodes.includes(code)) {
+                        cardEl.classList.add('winning-card');
+                    }
+                });
+            });
+        }
 
         function translateStage(stage) {
             const map = {
