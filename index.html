@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>极简德州扑克</title>
+    <style>
+        body { font-family: sans-serif; background: #205c36; color: white; text-align: center; }
+        .table { margin-top: 50px; }
+        .card { background: white; color: black; padding: 5px 10px; border-radius: 4px; margin: 2px; display: inline-block; font-weight: bold;}
+        .player { border: 2px solid #ddd; display: inline-block; padding: 10px; margin: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); }
+        .my-seat { border-color: yellow; background: rgba(0,0,0,0.6); }
+        #controls { margin-top: 20px; }
+        button { padding: 10px 20px; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+    <h1>多人联机德州扑克 (极简版)</h1>
+    
+    <div id="login-screen">
+        <input type="text" id="nickname" placeholder="输入昵称" />
+        <button onclick="joinGame()">入座</button>
+    </div>
+
+    <div id="game-screen" style="display:none;">
+        <div class="table">
+            <h3>公共牌区域</h3>
+            <div id="community-cards">等待开局...</div>
+        </div>
+
+        <div id="players-area">
+            </div>
+
+        <div id="controls">
+            <button onclick="startGame()">开始发牌 (管理员)</button>
+        </div>
+        
+        <div id="logs" style="margin-top:20px; color:#aaa;"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let myId = null;
+
+        // 1. 入座逻辑
+        function joinGame() {
+            const name = document.getElementById('nickname').value;
+            if(!name) return alert('请输入名字');
+            
+            socket.emit('join', name);
+            
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+        }
+
+        // 2. 监听连接成功，记录自己的ID
+        socket.on('connect', () => {
+            myId = socket.id;
+        });
+
+        // 3. 核心：监听服务器状态更新，重绘界面
+        socket.on('update_state', (state) => {
+            renderPlayers(state.players);
+            renderCommunity(state.communityCards);
+        });
+
+        socket.on('system_msg', (msg) => {
+            const log = document.getElementById('logs');
+            log.innerHTML = `<p>${msg}</p>` + log.innerHTML;
+        });
+
+        // 发送开始指令
+        function startGame() {
+            socket.emit('start_game');
+        }
+
+        // 渲染逻辑
+        function renderPlayers(players) {
+            const container = document.getElementById('players-area');
+            container.innerHTML = '';
+
+            players.forEach(p => {
+                const isMe = p.id === myId;
+                // 如果是自己，显示手牌；如果是别人，显示背面 "🂠"
+                const handHtml = (isMe && p.hand.length > 0) 
+                    ? p.hand.map(c => `<span class="card">${c}</span>`).join('') 
+                    : (p.hand.length > 0 ? '🂠 🂠' : '等待中');
+
+                const html = `
+                    <div class="player ${isMe ? 'my-seat' : ''}">
+                        <div><strong>${p.name}</strong></div>
+                        <div>筹码: ${p.chips}</div>
+                        <div style="margin-top:5px;">${handHtml}</div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+        
+        function renderCommunity(cards) {
+            const el = document.getElementById('community-cards');
+            if(cards.length === 0) {
+                el.innerHTML = '等待开局...';
+            } else {
+                el.innerHTML = cards.map(c => `<span class="card">${c}</span>`).join('');
+            }
+        }
+    </script>
+</body>
+</html>
