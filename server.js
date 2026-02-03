@@ -50,7 +50,14 @@ function startNewRound() {
         gameTimer = null;
     }
 
+    // --- 清理离线玩家 ---
+    // 简单处理：保留在线玩家。注意这可能会改变 activeSeat/dealerSeat 的相对人选，
+    // 但因为本函数接下来会由算法重新指定 dealerSeat 和 activeSeat，所以影响不大。
+    gameState.players = gameState.players.filter(p => !p.isOffline);
+
     if (gameState.players.length < 2) {
+        gameState.stage = 'waiting';
+        io.emit('update_state', gameState);
         io.emit('system_msg', '人数不足，等待玩家加入...');
         return;
     }
@@ -436,6 +443,43 @@ io.on('connection', (socket) => {
         if (!checkRoundEnd()) {
             gameState.activeSeat = getNextActiveSeat(gameState.activeSeat);
             io.emit('update_state', gameState);
+        }
+    });
+
+    socket.on('disconnect', () => {
+        const pIndex = gameState.players.findIndex(p => p.id === socket.id);
+        if (pIndex === -1) return;
+
+        const player = gameState.players[pIndex];
+        // 标记为离线，如果是游戏中，不立即删除，而是标记 folded
+        player.isOffline = true; 
+        io.emit('system_msg', `${player.name} 离开了游戏`);
+
+        // 1. 如果还在等待阶段，直接移除
+        if (gameState.stage === 'waiting') {
+            gameState.players.splice(pIndex, 1);
+            io.emit('update_state', gameState);
+            return;
+        }
+
+        // 2. 游戏中退出 -> 视为弃牌
+        // 只有没弃牌的人才需要处理逻辑
+        if (!player.folded) {
+            player.folded = true;
+            
+            // 检查游戏是否因此结束 (只剩一人)
+            if (checkRoundEnd()) {
+                return; // 如果结束了，checkRoundEnd 内部会处理结束流程
+            }
+
+            // 如果没结束，且正好轮到他，必须流转
+            if (pIndex === gameState.activeSeat) {
+                gameState.activeSeat = getNextActiveSeat(gameState.activeSeat);
+                io.emit('update_state', gameState);
+            } else {
+                // 只是普通弃牌，更新一下界面显示 (灰显)
+                io.emit('update_state', gameState);
+            }
         }
     });
 });
