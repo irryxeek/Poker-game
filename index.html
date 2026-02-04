@@ -160,6 +160,54 @@
             color: #f1c40f;
             border: 1px solid rgba(241, 196, 15, 0.3);
         }
+        .p-bet.has-bet {
+            background: rgba(241, 196, 15, 0.4);
+            border: 2px solid #f1c40f;
+            font-weight: bold;
+            animation: pulse-bet 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-bet {
+            0%, 100% { box-shadow: 0 0 5px rgba(241, 196, 15, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(241, 196, 15, 0.8); }
+        }
+        .p-action {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 4px;
+            display: inline-block;
+            font-weight: bold;
+        }
+        .p-action.fold {
+            background: rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.5);
+        }
+        .p-action.check {
+            background: rgba(52, 152, 219, 0.3);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.5);
+        }
+        .p-action.call {
+            background: rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.5);
+        }
+        .p-action.raise {
+            background: rgba(243, 156, 18, 0.3);
+            color: #f39c12;
+            border: 1px solid rgba(243, 156, 18, 0.5);
+        }
+        .p-action.allin {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.4) 0%, rgba(192, 57, 43, 0.4) 100%);
+            color: #fff;
+            border: 2px solid #e74c3c;
+            animation: pulse-allin 1s ease-in-out infinite;
+        }
+        @keyframes pulse-allin {
+            0%, 100% { box-shadow: 0 0 5px rgba(231, 76, 60, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(231, 76, 60, 1); }
+        }
         .p-status { font-size: 11px; color: #aaa; margin-top: 3px; }
 
         /* --- 底部操作栏 --- */
@@ -295,6 +343,88 @@
         #logs::-webkit-scrollbar { width: 4px; }
         #logs::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
 
+        /* 聊天区域 */
+        .chat-container {
+            margin: 10px 15px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .chat-header {
+            background: rgba(0,0,0,0.3);
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #f1c40f;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .chat-toggle {
+            font-size: 12px;
+            color: #aaa;
+        }
+        #chat-messages {
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 8px 12px;
+            font-size: 13px;
+            text-align: left;
+        }
+        #chat-messages::-webkit-scrollbar { width: 4px; }
+        #chat-messages::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
+        .chat-msg {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        .chat-msg .chat-name {
+            color: #3498db;
+            font-weight: bold;
+        }
+        .chat-msg .chat-text {
+            color: #eee;
+        }
+        .chat-msg .chat-time {
+            color: #666;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+        .chat-input-row {
+            display: flex;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        #chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+        #chat-input::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+        .chat-send-btn {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chat-send-btn:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #2471a3 100%);
+        }
+        .chat-collapsed #chat-messages,
+        .chat-collapsed .chat-input-row {
+            display: none;
+        }
+
         /* 开始游戏按钮 */
         .start-btn-container { margin-top: 15px; }
         .btn-start-game {
@@ -336,6 +466,19 @@
         <div id="players-area"></div>
 
         <div id="logs"></div>
+
+        <!-- 聊天区域 -->
+        <div class="chat-container" id="chat-container">
+            <div class="chat-header" onclick="toggleChat()">
+                <span>💬 聊天室</span>
+                <span class="chat-toggle" id="chat-toggle">收起 ▲</span>
+            </div>
+            <div id="chat-messages"></div>
+            <div class="chat-input-row">
+                <input type="text" id="chat-input" placeholder="输入消息..." maxlength="200" onkeypress="handleChatKeypress(event)">
+                <button class="chat-send-btn" onclick="sendChatMsg()">发送</button>
+            </div>
+        </div>
 
         <div class="start-btn-container">
             <button id="start-game-btn" class="btn-start-game" onclick="socket.emit('start_game')">🎮 开始游戏</button>
@@ -394,8 +537,10 @@
                 document.getElementById('winner-overlay')?.remove();
             }
 
-            // 1. 更新顶部信息
-            document.getElementById('pot-num').innerText = state.pot;
+            // 1. 更新顶部信息 - 动态计算底池（已归集的 + 本轮下注）
+            const currentRoundBets = state.players.reduce((sum, p) => sum + p.bet, 0);
+            const totalPot = state.pot + currentRoundBets;
+            document.getElementById('pot-num').innerText = totalPot;
             document.getElementById('stage-name').innerText = translateStage(state.stage);
             
             const commDiv = document.getElementById('community-cards');
@@ -437,18 +582,38 @@
                 }
 
                 // 状态文本
-                let statusText = '';
-                if (p.folded) statusText = '已弃牌';
-                else if (p.chips === 0 && p.bet > 0) statusText = 'ALL IN';
-                else if (p.isWaiting) statusText = '等待下一局';
+                // 确定玩家本轮操作状态
+                let actionHtml = '';
+                let betClass = p.bet > 0 ? 'has-bet' : '';
+                
+                if (p.folded) {
+                    actionHtml = '<div class="p-action fold">❌ 弃牌</div>';
+                } else if (p.lastAction === 'allin' || (p.chips === 0 && p.bet > 0)) {
+                    actionHtml = '<div class="p-action allin">🔥 ALL IN</div>';
+                } else if (p.isWaiting) {
+                    actionHtml = '<div class="p-action">⏳ 等待下一局</div>';
+                } else if (p.lastAction && state.stage !== 'waiting') {
+                    // 根据服务器记录的操作类型显示
+                    switch(p.lastAction) {
+                        case 'check':
+                            actionHtml = '<div class="p-action check">✓ 过牌</div>';
+                            break;
+                        case 'call':
+                            actionHtml = '<div class="p-action call">✓ 跟注</div>';
+                            break;
+                        case 'raise':
+                            actionHtml = '<div class="p-action raise">↑ 加注</div>';
+                            break;
+                    }
+                }
 
                 const playerHtml = `
                     <div class="player ${isTurn ? 'active-turn' : ''} ${p.folded ? 'folded' : ''} ${p.isHost ? 'is-host' : ''}">
                         ${isDealer ? '<div class="dealer-btn">D</div>' : ''}
                         <div class="p-name">${p.name}${isMe ? ' (我)' : ''}</div>
                         <div class="p-chips">💰 ${p.chips}</div>
-                        <div class="p-bet">下注: ${p.bet}</div>
-                        ${statusText ? `<div class="p-status">${statusText}</div>` : ''}
+                        <div class="p-bet ${betClass}">本轮下注: ${p.bet}</div>
+                        ${actionHtml}
                         <div style="margin-top:5px;">${handHtml}</div>
                     </div>
                 `;
@@ -527,7 +692,10 @@
         function quickRaise(type) {
             if (!myPlayer || !currentState) return;
             
-            const pot = currentState.pot;
+            // 计算实际底池（已归集的 + 本轮所有下注）
+            const currentRoundBets = currentState.players.reduce((sum, p) => sum + p.bet, 0);
+            const totalPot = currentState.pot + currentRoundBets;
+            
             const maxBet = currentState.currentMaxBet;
             const minRaise = currentState.minRaise || currentState.bigBlind || 20;
             const myBet = myPlayer.bet;
@@ -540,10 +708,10 @@
                     targetBet = maxBet + minRaise;
                     break;
                 case 'half':
-                    targetBet = maxBet + Math.floor(pot / 2);
+                    targetBet = maxBet + Math.floor(totalPot / 2);
                     break;
                 case 'pot':
-                    targetBet = maxBet + pot;
+                    targetBet = maxBet + totalPot;
                     break;
                 case 'allin':
                     targetBet = myBet + myChips;
@@ -656,6 +824,56 @@
                 'showdown': '摊牌'
             };
             return map[stage] || stage;
+        }
+
+        // --- 聊天功能 ---
+        
+        socket.on('chat_msg', (data) => {
+            const chatDiv = document.getElementById('chat-messages');
+            const msgHtml = `
+                <div class="chat-msg">
+                    <span class="chat-name">${data.name}:</span>
+                    <span class="chat-text">${escapeHtml(data.msg)}</span>
+                    <span class="chat-time">${data.time}</span>
+                </div>
+            `;
+            chatDiv.innerHTML += msgHtml;
+            // 自动滚动到底部
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        });
+
+        function sendChatMsg() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+            
+            socket.emit('chat_msg', msg);
+            input.value = '';
+        }
+
+        function handleChatKeypress(e) {
+            if (e.key === 'Enter') {
+                sendChatMsg();
+            }
+        }
+
+        function toggleChat() {
+            const container = document.getElementById('chat-container');
+            const toggle = document.getElementById('chat-toggle');
+            
+            if (container.classList.contains('chat-collapsed')) {
+                container.classList.remove('chat-collapsed');
+                toggle.innerText = '收起 ▲';
+            } else {
+                container.classList.add('chat-collapsed');
+                toggle.innerText = '展开 ▼';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
     </script>
 </body>

@@ -92,7 +92,8 @@ function startNewRound() {
         p.bet = 0;
         p.totalHandBet = 0;
         p.hasActed = false;
-        p.isWaiting = false;  // 重置等待状态，让所有人参与新一局
+        p.isWaiting = false;
+        p.lastAction = null;  // 记录本轮最后操作: 'fold', 'check', 'call', 'raise', 'allin'
         if(p.solvedHand) delete p.solvedHand;
     });
 
@@ -102,14 +103,16 @@ function startNewRound() {
     let actualSB = Math.min(sbPlayer.chips, SB_VAL);
     sbPlayer.chips -= actualSB;
     sbPlayer.bet = actualSB;
-    sbPlayer.totalHandBet = actualSB;
+    // 注意：totalHandBet 会在 nextStage 时从 bet 累加，这里不要重复设置
 
     let actualBB = Math.min(bbPlayer.chips, BB_VAL);
     bbPlayer.chips -= actualBB;
     bbPlayer.bet = actualBB;
-    bbPlayer.totalHandBet = actualBB;
+    // 注意：totalHandBet 会在 nextStage 时从 bet 累加，这里不要重复设置
 
-    gameState.pot = actualSB + actualBB;
+    // pot 在这里只是用于界面显示，实际归集在 nextStage 进行
+    // 为了界面显示当前下注总额，这里设置为 0，让前端动态计算
+    gameState.pot = 0;
     gameState.currentMaxBet = actualBB;
     gameState.minRaise = BB_VAL;
 
@@ -161,6 +164,7 @@ function nextStage() {
         p.totalHandBet += p.bet;
         p.bet = 0;
         p.hasActed = false;
+        p.lastAction = null;  // 重置本轮操作状态
     });
     gameState.currentMaxBet = 0;
     gameState.minRaise = gameState.bigBlind;
@@ -341,6 +345,21 @@ io.on('connection', (socket) => {
         io.emit('update_state', gameState);
     });
 
+    // 聊天功能
+    socket.on('chat_msg', (msg) => {
+        const player = gameState.players.find(p => p.id === socket.id);
+        if (!player) return;
+        
+        // 限制消息长度
+        const safeMsg = msg.substring(0, 200);
+        
+        io.emit('chat_msg', {
+            name: player.name,
+            msg: safeMsg,
+            time: new Date().toTimeString().split(' ')[0]
+        });
+    });
+
     socket.on('start_game', () => {
         // 只有房主可以开始游戏
         if (socket.id !== gameState.hostId) {
@@ -360,10 +379,12 @@ io.on('connection', (socket) => {
 
         if (type === 'fold') {
             player.folded = true;
+            player.lastAction = 'fold';
             io.emit('system_msg', `${player.name} 弃牌`);
         } 
         else if (type === 'check') {
             if (player.bet < gameState.currentMaxBet) return;
+            player.lastAction = 'check';
             io.emit('system_msg', `${player.name} 过牌`);
         } 
         else if (type === 'call') {
@@ -372,9 +393,11 @@ io.on('connection', (socket) => {
             
             if (player.chips <= gap) {
                 actualCall = player.chips;
+                player.lastAction = 'allin';
                 io.emit('system_msg', `${player.name} All-in! (${actualCall})`);
             } else {
-                io.emit('system_msg', `${player.name} 跟注`);
+                player.lastAction = 'call';
+                io.emit('system_msg', `${player.name} 跟注 ${actualCall}`);
             }
             
             player.chips -= actualCall;
@@ -398,6 +421,7 @@ io.on('connection', (socket) => {
                 const allInAmt = player.chips + player.bet;
                 player.chips = 0;
                 player.bet = allInAmt;
+                player.lastAction = 'allin';
                 
                 if (allInAmt > gameState.currentMaxBet) {
                     gameState.currentMaxBet = allInAmt;
@@ -407,6 +431,7 @@ io.on('connection', (socket) => {
             } else {
                 player.chips -= needPay;
                 player.bet = amount;
+                player.lastAction = 'raise';
                 gameState.currentMaxBet = amount;
                 gameState.minRaise = raiseDelta;
                 resetOtherPlayersActed(pIndex);
