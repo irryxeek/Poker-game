@@ -19,6 +19,8 @@ let gameState = {
     pot: 0,
     activeSeat: 0,
     dealerSeat: 0,
+    sbSeat: -1,      // 小盲位置
+    bbSeat: -1,      // 大盲位置
     currentMaxBet: 0,
     minRaise: 0,
     bigBlind: 20,
@@ -82,6 +84,10 @@ function startNewRound() {
         sbSeat = (gameState.dealerSeat + 1) % n;
         bbSeat = (gameState.dealerSeat + 2) % n;
     }
+    
+    // 保存到gameState供前端使用
+    gameState.sbSeat = sbSeat;
+    gameState.bbSeat = bbSeat;
 
     const SB_VAL = gameState.bigBlind / 2;
     const BB_VAL = gameState.bigBlind;

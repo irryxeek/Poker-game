@@ -71,60 +71,141 @@
         
         /* 公共牌 */
         #community-cards { 
-            min-height: 70px; 
-            margin: 15px auto; 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-height: 60px; 
             display: flex; 
             justify-content: center; 
-            gap: 8px;
+            gap: 6px;
             perspective: 1000px;
+            z-index: 5;
         }
         
         /* 扑克牌通用样式 */
         .card { 
             background: linear-gradient(135deg, #fff 0%, #f5f5f5 100%);
             color: black; 
-            padding: 8px 12px; 
-            border-radius: 8px; 
+            padding: 5px 8px; 
+            border-radius: 6px; 
             font-weight: bold; 
-            font-size: 20px; 
-            box-shadow: 3px 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.8); 
+            font-size: 14px; 
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.8); 
             display: inline-block; 
-            min-width: 35px;
+            min-width: 28px;
             transition: transform 0.3s, box-shadow 0.3s;
         }
-        .card:hover { transform: translateY(-3px); }
+        .card:hover { transform: translateY(-2px); }
+        
+        /* 公共牌稍大 */
+        #community-cards .card {
+            padding: 6px 10px; 
+            font-size: 16px;
+            min-width: 30px;
+        }
+
+        /* --- 牌桌区域 --- */
+        .poker-table {
+            position: relative;
+            width: 90%;
+            max-width: 420px;
+            height: 240px;
+            margin: 60px auto 80px;
+            background: linear-gradient(145deg, #1a5c32 0%, #2d7a4a 50%, #1a5c32 100%);
+            border-radius: 120px;
+            border: 6px solid #8B4513;
+            box-shadow: 
+                inset 0 0 40px rgba(0,0,0,0.3),
+                0 8px 25px rgba(0,0,0,0.5),
+                0 0 0 3px #654321;
+        }
+        .table-felt {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 15px;
+            border-radius: 130px;
+            border: 3px solid rgba(255,255,255,0.1);
+        }
 
         /* --- 玩家区域 --- */
         #players-area { 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            gap: 12px; 
-            padding: 15px;
-            max-width: 600px;
-            margin: 0 auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
         
         .player { 
-            position: relative;
-            border: 2px solid rgba(255,255,255,0.15); 
-            background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 100%); 
-            padding: 12px; 
-            border-radius: 15px; 
-            width: 45%;
-            max-width: 160px;
+            position: absolute;
+            border: 2px solid rgba(255,255,255,0.2); 
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 100%); 
+            padding: 6px 8px; 
+            border-radius: 10px; 
+            width: 100px;
             transition: all 0.3s;
             backdrop-filter: blur(5px);
+            text-align: center;
+            font-size: 12px;
         }
+        
+        /* 玩家位置 - 根据人数动态分布 */
+        .player.seat-0 { top: -70px; left: 50%; transform: translateX(-50%); }
+        .player.seat-1 { top: 10px; right: -55px; }
+        .player.seat-2 { top: 50%; right: -60px; transform: translateY(-50%); }
+        .player.seat-3 { bottom: 10px; right: -55px; }
+        .player.seat-4 { bottom: -70px; left: 50%; transform: translateX(-50%); }
+        .player.seat-5 { bottom: 10px; left: -55px; }
+        .player.seat-6 { top: 50%; left: -60px; transform: translateY(-50%); }
+        .player.seat-7 { top: 10px; left: -55px; }
+        
+        /* 2人模式 */
+        .players-2 .player.seat-0 { top: -70px; left: 50%; transform: translateX(-50%); }
+        .players-2 .player.seat-1 { bottom: -70px; left: 50%; transform: translateX(-50%); }
+        
+        /* 3人模式 */
+        .players-3 .player.seat-0 { top: -70px; left: 50%; transform: translateX(-50%); }
+        .players-3 .player.seat-1 { bottom: 10px; right: -45px; }
+        .players-3 .player.seat-2 { bottom: 10px; left: -45px; }
+        
+        /* 4人模式 */
+        .players-4 .player.seat-0 { top: -70px; left: 50%; transform: translateX(-50%); }
+        .players-4 .player.seat-1 { top: 50%; right: -60px; transform: translateY(-50%); }
+        .players-4 .player.seat-2 { bottom: -70px; left: 50%; transform: translateX(-50%); }
+        .players-4 .player.seat-3 { top: 50%; left: -60px; transform: translateY(-50%); }
+        
+        /* 5人模式 */
+        .players-5 .player.seat-0 { top: -70px; left: 50%; transform: translateX(-50%); }
+        .players-5 .player.seat-1 { top: 30%; right: -55px; }
+        .players-5 .player.seat-2 { bottom: 0; right: -45px; }
+        .players-5 .player.seat-3 { bottom: 0; left: -45px; }
+        .players-5 .player.seat-4 { top: 30%; left: -55px; }
+        
+        /* 6人模式 */
+        .players-6 .player.seat-0 { top: -70px; left: 50%; transform: translateX(-50%); }
+        .players-6 .player.seat-1 { top: 20%; right: -55px; }
+        .players-6 .player.seat-2 { bottom: 20%; right: -55px; }
+        .players-6 .player.seat-3 { bottom: -70px; left: 50%; transform: translateX(-50%); }
+        .players-6 .player.seat-4 { bottom: 20%; left: -55px; }
+        .players-6 .player.seat-5 { top: 20%; left: -55px; }
         
         /* 状态修饰 */
         .active-turn { 
             border-color: #f1c40f; 
             box-shadow: 0 0 25px rgba(241, 196, 15, 0.7), inset 0 0 15px rgba(241, 196, 15, 0.1); 
-            background: linear-gradient(180deg, rgba(241, 196, 15, 0.15) 0%, rgba(0,0,0,0.4) 100%); 
-            transform: scale(1.05); 
+            background: linear-gradient(180deg, rgba(241, 196, 15, 0.2) 0%, rgba(0,0,0,0.6) 100%); 
             z-index: 10;
         }
+        /* 保持正确的 transform 属性 */
+        .player.seat-0.active-turn, .player.seat-4.active-turn,
+        .players-2 .player.seat-1.active-turn, .players-4 .player.seat-2.active-turn,
+        .players-6 .player.seat-3.active-turn { transform: translateX(-50%) scale(1.05); }
+        .player.seat-2.active-turn, .player.seat-6.active-turn,
+        .players-4 .player.seat-1.active-turn, .players-4 .player.seat-3.active-turn { transform: translateY(-50%) scale(1.05); }
+        
         .folded { opacity: 0.4; filter: grayscale(100%); }
         .winner { border-color: #e74c3c; box-shadow: 0 0 25px #e74c3c; }
         .is-host::before {
@@ -146,17 +227,41 @@
             border-radius: 50%; font-size: 12px; font-weight: bold;
             box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
         }
+        
+        /* 小盲按钮 (Small Blind) */
+        .sb-btn { 
+            position: absolute; bottom: -8px; left: 8px; 
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); 
+            color: #fff; 
+            border: 2px solid #fff; 
+            width: 22px; height: 22px; line-height: 18px; 
+            border-radius: 50%; font-size: 9px; font-weight: bold;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        /* 大盲按钮 (Big Blind) */
+        .bb-btn { 
+            position: absolute; bottom: -8px; left: 8px; 
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); 
+            color: #fff; 
+            border: 2px solid #fff; 
+            width: 22px; height: 22px; line-height: 18px; 
+            border-radius: 50%; font-size: 9px; font-weight: bold;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            text-align: center;
+        }
 
         /* 玩家信息细节 */
-        .p-name { font-weight: bold; font-size: 14px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-bottom: 3px; }
-        .p-chips { color: #2ecc71; font-size: 15px; font-weight: bold; margin: 4px 0; }
+        .p-name { font-weight: bold; font-size: 11px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-bottom: 2px; }
+        .p-chips { color: #2ecc71; font-size: 12px; font-weight: bold; margin: 2px 0; }
         .p-bet { 
             background: rgba(241, 196, 15, 0.2); 
-            border-radius: 12px; 
-            font-size: 12px; 
-            padding: 3px 10px; 
+            border-radius: 10px; 
+            font-size: 10px; 
+            padding: 2px 6px; 
             display: inline-block; 
-            margin-bottom: 6px; 
+            margin-bottom: 3px; 
             color: #f1c40f;
             border: 1px solid rgba(241, 196, 15, 0.3);
         }
@@ -171,10 +276,10 @@
             50% { box-shadow: 0 0 15px rgba(241, 196, 15, 0.8); }
         }
         .p-action {
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            margin-top: 4px;
+            font-size: 9px;
+            padding: 2px 5px;
+            border-radius: 8px;
+            margin-top: 2px;
             display: inline-block;
             font-weight: bold;
         }
@@ -201,7 +306,7 @@
         .p-action.allin {
             background: linear-gradient(135deg, rgba(231, 76, 60, 0.4) 0%, rgba(192, 57, 43, 0.4) 100%);
             color: #fff;
-            border: 2px solid #e74c3c;
+            border: 1px solid #e74c3c;
             animation: pulse-allin 1s ease-in-out infinite;
         }
         @keyframes pulse-allin {
@@ -460,10 +565,15 @@
         <div class="info-board">
             <div class="stage-text">当前阶段: <span id="stage-name" class="stage-name">等待开始</span></div>
             <div class="pot-text">💰 底池: <span id="pot-num">0</span></div>
-            <div id="community-cards"></div>
         </div>
-
-        <div id="players-area"></div>
+        
+        <!-- 牌桌 -->
+        <div class="poker-table">
+            <div class="table-felt">
+                <div id="community-cards"></div>
+            </div>
+            <div id="players-area"></div>
+        </div>
 
         <div id="logs"></div>
 
@@ -564,11 +674,14 @@
             // 3. 渲染所有玩家
             const pArea = document.getElementById('players-area');
             pArea.innerHTML = '';
+            pArea.className = `players-${state.players.length}`;
 
             state.players.forEach((p, index) => {
                 const isMe = p.id === myId;
                 const isTurn = index === state.activeSeat;
                 const isDealer = index === state.dealerSeat;
+                const isSB = index === state.sbSeat;
+                const isBB = index === state.bbSeat;
 
                 let handHtml = '';
                 if (p.hand && p.hand.length > 0) {
@@ -608,8 +721,10 @@
                 }
 
                 const playerHtml = `
-                    <div class="player ${isTurn ? 'active-turn' : ''} ${p.folded ? 'folded' : ''} ${p.isHost ? 'is-host' : ''}">
+                    <div class="player seat-${index} ${isTurn ? 'active-turn' : ''} ${p.folded ? 'folded' : ''} ${p.isHost ? 'is-host' : ''}">
                         ${isDealer ? '<div class="dealer-btn">D</div>' : ''}
+                        ${isSB ? '<div class="sb-btn">SB</div>' : ''}
+                        ${isBB ? '<div class="bb-btn">BB</div>' : ''}
                         <div class="p-name">${p.name}${isMe ? ' (我)' : ''}</div>
                         <div class="p-chips">💰 ${p.chips}</div>
                         <div class="p-bet ${betClass}">本轮下注: ${p.bet}</div>
