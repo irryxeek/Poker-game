@@ -6,138 +6,361 @@
     <title>德州扑克 Pro</title>
     <style>
         /* --- 基础样式 --- */
+        * { box-sizing: border-box; }
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background: #205c36; /* 经典的牌桌绿 */
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 50%, #1a472a 100%);
             color: white; 
             text-align: center; 
             margin: 0; 
-            padding-bottom: 80px; /* 给底部操作栏留空间 */
+            padding-bottom: 180px;
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
         /* --- 登录页 --- */
         #login-screen {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; background: rgba(0,0,0,0.8);
+            height: 100vh; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(20,60,40,0.9) 100%);
         }
-        input { padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; text-align: center;}
-        .btn-start { padding: 10px 20px; font-size: 18px; background: #f1c40f; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer; color: #333; font-weight: bold;}
+        #login-screen h1 {
+            font-size: 48px;
+            background: linear-gradient(to bottom, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+            margin-bottom: 30px;
+        }
+        input { 
+            padding: 15px 20px; 
+            border-radius: 25px; 
+            border: 2px solid #f1c40f; 
+            font-size: 18px; 
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            width: 280px;
+            outline: none;
+        }
+        input::placeholder { color: rgba(255,255,255,0.5); }
+        .btn-start { 
+            padding: 15px 50px; 
+            font-size: 20px; 
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); 
+            border: none; 
+            border-radius: 25px; 
+            margin-top: 20px; 
+            cursor: pointer; 
+            color: #333; 
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-start:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(241, 196, 15, 0.6); }
 
         /* --- 游戏区 --- */
-        .info-board { background: rgba(0,0,0,0.3); padding: 10px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .pot-text { font-size: 24px; color: #f1c40f; font-weight: bold; text-shadow: 1px 1px 2px black;}
+        .info-board { 
+            background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 100%); 
+            padding: 15px; 
+            margin-bottom: 10px; 
+            border-bottom: 2px solid rgba(241, 196, 15, 0.3);
+        }
+        .stage-text { font-size: 14px; color: #aaa; margin-bottom: 5px; }
+        .stage-name { color: #fff; font-weight: bold; background: rgba(241,196,15,0.2); padding: 3px 12px; border-radius: 12px; }
+        .pot-text { font-size: 28px; color: #f1c40f; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin: 10px 0; }
         
         /* 公共牌 */
-        #community-cards { min-height: 60px; margin: 10px 0; display: flex; justify-content: center; gap: 5px; }
+        #community-cards { 
+            min-height: 70px; 
+            margin: 15px auto; 
+            display: flex; 
+            justify-content: center; 
+            gap: 8px;
+            perspective: 1000px;
+        }
         
         /* 扑克牌通用样式 */
         .card { 
-            background: white; color: black; 
-            padding: 6px 10px; border-radius: 6px; 
-            font-weight: bold; font-size: 18px; 
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.5); 
-            display: inline-block; min-width: 20px;
+            background: linear-gradient(135deg, #fff 0%, #f5f5f5 100%);
+            color: black; 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            font-size: 20px; 
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.8); 
+            display: inline-block; 
+            min-width: 35px;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
+        .card:hover { transform: translateY(-3px); }
 
         /* --- 玩家区域 --- */
-        #players-area { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px;}
+        #players-area { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 12px; 
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
         
         .player { 
             position: relative;
-            border: 2px solid rgba(255,255,255,0.1); 
-            background: rgba(0,0,0,0.4); 
-            padding: 10px; border-radius: 10px; 
-            width: 42%; /* 手机上一行两个 */
-            max-width: 150px;
+            border: 2px solid rgba(255,255,255,0.15); 
+            background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 100%); 
+            padding: 12px; 
+            border-radius: 15px; 
+            width: 45%;
+            max-width: 160px;
             transition: all 0.3s;
+            backdrop-filter: blur(5px);
         }
         
         /* 状态修饰 */
-        .active-turn { border-color: #f1c40f; box-shadow: 0 0 15px rgba(241, 196, 15, 0.6); background: rgba(241, 196, 15, 0.1); transform: scale(1.05); z-index: 10;}
-        .folded { opacity: 0.5; filter: grayscale(100%); }
-        .winner { border-color: #e74c3c; box-shadow: 0 0 20px #e74c3c; }
+        .active-turn { 
+            border-color: #f1c40f; 
+            box-shadow: 0 0 25px rgba(241, 196, 15, 0.7), inset 0 0 15px rgba(241, 196, 15, 0.1); 
+            background: linear-gradient(180deg, rgba(241, 196, 15, 0.15) 0%, rgba(0,0,0,0.4) 100%); 
+            transform: scale(1.05); 
+            z-index: 10;
+        }
+        .folded { opacity: 0.4; filter: grayscale(100%); }
+        .winner { border-color: #e74c3c; box-shadow: 0 0 25px #e74c3c; }
+        .is-host::before {
+            content: '👑';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+        }
 
         /* 庄家按钮 (Dealer Button) */
         .dealer-btn { 
-            position: absolute; top: -10px; right: -10px; 
-            background: white; color: black; border: 2px solid orange; 
-            width: 20px; height: 20px; line-height: 20px; 
+            position: absolute; top: -8px; right: -8px; 
+            background: linear-gradient(135deg, #fff 0%, #ddd 100%); 
+            color: #333; 
+            border: 3px solid #f39c12; 
+            width: 24px; height: 24px; line-height: 18px; 
             border-radius: 50%; font-size: 12px; font-weight: bold;
-            box-shadow: 1px 1px 3px black;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
         }
 
         /* 玩家信息细节 */
-        .p-name { font-weight: bold; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .p-chips { color: #2ecc71; font-size: 14px; margin: 2px 0; }
-        .p-bet { background: rgba(0,0,0,0.3); border-radius: 10px; font-size: 12px; padding: 2px 8px; display: inline-block; margin-bottom: 5px; color: #ddd;}
+        .p-name { font-weight: bold; font-size: 14px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-bottom: 3px; }
+        .p-chips { color: #2ecc71; font-size: 15px; font-weight: bold; margin: 4px 0; }
+        .p-bet { 
+            background: rgba(241, 196, 15, 0.2); 
+            border-radius: 12px; 
+            font-size: 12px; 
+            padding: 3px 10px; 
+            display: inline-block; 
+            margin-bottom: 6px; 
+            color: #f1c40f;
+            border: 1px solid rgba(241, 196, 15, 0.3);
+        }
+        .p-status { font-size: 11px; color: #aaa; margin-top: 3px; }
 
         /* --- 底部操作栏 --- */
         #controls-bar { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
-            background: rgba(0,0,0,0.9); padding: 15px 10px; 
-            box-sizing: border-box; 
-            display: flex; justify-content: space-around; align-items: center;
-            border-top: 1px solid #444;
+            background: linear-gradient(180deg, rgba(20,20,20,0.98) 0%, rgba(0,0,0,0.98) 100%); 
+            padding: 12px 10px 20px 10px; 
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            border-top: 2px solid #333;
             z-index: 100;
         }
         
-        /* 按钮通用 */
-        .action-btn { padding: 12px 0; width: 30%; border-radius: 8px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; color: white;}
-        .btn-fold { background: #e74c3c; } /* 红 */
-        .btn-check { background: #3498db; } /* 蓝 */
-        .btn-call { background: #2ecc71; } /* 绿 */
-        .btn-raise { background: #f39c12; } /* 橙 */
+        /* 快捷加注按钮行 */
+        .quick-raise-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+            padding: 0 5px;
+        }
+        .quick-btn {
+            flex: 1;
+            padding: 10px 5px;
+            border-radius: 8px;
+            border: 2px solid #555;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-btn:hover, .quick-btn:active {
+            background: rgba(241, 196, 15, 0.2);
+            border-color: #f1c40f;
+        }
+        .quick-btn.allin {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+            border-color: #e74c3c;
+            color: #fff;
+        }
+        
+        /* 加注滑块行 */
+        .raise-slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+        }
+        .raise-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #2ecc71 0%, #f1c40f 50%, #e74c3c 100%);
+            outline: none;
+        }
+        .raise-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #f1c40f;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .raise-amount-display {
+            min-width: 70px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #f1c40f;
+            border-radius: 8px;
+            color: #f1c40f;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+        }
 
-        /* 加注输入区 */
-        .raise-group { display: flex; flex-direction: column; width: 30%; gap: 5px; }
-        .raise-input { width: 100%; box-sizing: border-box; padding: 5px; border-radius: 4px; border: 1px solid #aaa; color: black; text-align: center; font-weight: bold;}
+        /* 主操作按钮行 */
+        .action-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+            padding: 0 5px;
+        }
+        
+        .action-btn { 
+            flex: 1;
+            padding: 14px 0; 
+            border-radius: 10px; 
+            border: none; 
+            font-weight: bold; 
+            font-size: 16px; 
+            cursor: pointer; 
+            color: white;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        .action-btn:active { transform: scale(0.95); }
+        
+        .btn-fold { background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%); }
+        .btn-check { background: linear-gradient(135deg, #2980b9 0%, #3498db 100%); }
+        .btn-call { background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); }
+        .btn-raise { background: linear-gradient(135deg, #d35400 0%, #f39c12 100%); box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3); }
 
-        /* 在 style 标签里增加 */
+        /* 赢牌高亮 */
         .winning-card {
-            border: 2px solid #f1c40f !important; /* 金色边框 */
-            box-shadow: 0 0 10px #f1c40f !important; /* 金色发光 */
-            transform: translateY(-5px); /* 稍微上浮 */
+            border: 3px solid #f1c40f !important;
+            box-shadow: 0 0 15px #f1c40f, 0 0 30px rgba(241,196,15,0.5) !important;
+            transform: translateY(-8px) scale(1.05);
             z-index: 100;
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 15px #f1c40f, 0 0 30px rgba(241,196,15,0.5); }
+            to { box-shadow: 0 0 25px #f1c40f, 0 0 50px rgba(241,196,15,0.8); }
         }
         
         /* 系统消息 */
-        #logs { font-size: 12px; color: #aaa; max-height: 80px; overflow-y: auto; margin: 10px; text-align: left; background: rgba(0,0,0,0.2); padding: 5px;}
+        #logs { 
+            font-size: 12px; 
+            color: #aaa; 
+            max-height: 60px; 
+            overflow-y: auto; 
+            margin: 10px 15px; 
+            text-align: left; 
+            background: rgba(0,0,0,0.3); 
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #logs::-webkit-scrollbar { width: 4px; }
+        #logs::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
+
+        /* 开始游戏按钮 */
+        .start-btn-container { margin-top: 15px; }
+        .btn-start-game {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            border: none;
+            color: white;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            transition: transform 0.2s;
+        }
+        .btn-start-game:hover { transform: scale(1.05); }
+        .btn-start-game:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <h1 style="color:#f1c40f; text-shadow: 2px 2px 0 #000;">德州扑克</h1>
-        <input type="text" id="nickname" placeholder="输入昵称 (例如: 赌神)">
-        <button class="btn-start" onclick="joinGame()">入座</button>
+        <h1>♠ 德州扑克 ♥</h1>
+        <input type="text" id="nickname" placeholder="输入昵称">
+        <button class="btn-start" onclick="joinGame()">🎰 入座</button>
     </div>
 
     <div id="game-screen" style="display:none;">
         
         <div class="info-board">
-            <div style="font-size: 12px; color: #ccc;">当前阶段: <span id="stage-name" style="color:#fff; font-weight:bold;">等待开始</span></div>
-            <div class="pot-text">底池: <span id="pot-num">0</span></div>
+            <div class="stage-text">当前阶段: <span id="stage-name" class="stage-name">等待开始</span></div>
+            <div class="pot-text">💰 底池: <span id="pot-num">0</span></div>
             <div id="community-cards"></div>
         </div>
 
-        <div id="players-area">
-            </div>
+        <div id="players-area"></div>
 
         <div id="logs"></div>
 
-        <div style="margin-top: 20px; opacity: 0.6;">
-            <button onclick="socket.emit('start_game')" style="padding:5px 10px; background:#555; border:none; color:white; border-radius:4px;">🔄 重新/开始游戏</button>
+        <div class="start-btn-container">
+            <button id="start-game-btn" class="btn-start-game" onclick="socket.emit('start_game')">🎮 开始游戏</button>
         </div>
 
-        <div id="controls-bar" style="display:none;">
-            <button class="action-btn btn-fold" onclick="sendAction('fold')">弃牌</button>
+        <div id="controls-bar">
+            <!-- 快捷加注按钮 -->
+            <div class="quick-raise-row">
+                <button class="quick-btn" onclick="quickRaise('min')">最小加注</button>
+                <button class="quick-btn" onclick="quickRaise('half')">1/2 底池</button>
+                <button class="quick-btn" onclick="quickRaise('pot')">底池</button>
+                <button class="quick-btn allin" onclick="quickRaise('allin')">ALL IN</button>
+            </div>
             
-            <button id="btn-call-check" class="action-btn btn-check" onclick="handleCallCheck()">过牌</button>
+            <!-- 加注滑块 -->
+            <div class="raise-slider-row">
+                <input type="range" id="raise-slider" class="raise-slider" min="0" max="1000" value="0" oninput="updateRaiseDisplay()">
+                <div id="raise-amount-display" class="raise-amount-display">0</div>
+            </div>
             
-            <div class="raise-group">
-                <input type="number" id="raise-amount" class="raise-input" placeholder="数额">
-                <button class="action-btn btn-raise" style="width:100%; padding: 5px 0;" onclick="handleRaise()">加注</button>
+            <!-- 主操作按钮 -->
+            <div class="action-row">
+                <button class="action-btn btn-fold" onclick="sendAction('fold')">弃牌</button>
+                <button id="btn-call-check" class="action-btn btn-check" onclick="handleCallCheck()">过牌</button>
+                <button class="action-btn btn-raise" onclick="handleRaise()">加注</button>
             </div>
         </div>
     </div>
@@ -147,7 +370,8 @@
         const socket = io();
         let myId = null;
         let currentState = null; 
-        let currentWinners = null; // 保存本局获胜信息
+        let currentWinners = null;
+        let myPlayer = null;
 
         // --- 基础连接逻辑 ---
         socket.on('connect', () => { myId = socket.id; });
@@ -162,12 +386,12 @@
 
         // --- 核心：UI 渲染 ---
         socket.on('update_state', (state) => {
-            currentState = state; // 更新本地缓存
+            currentState = state;
+            myPlayer = state.players.find(p => p.id === myId);
             
-            // 如果新的一局开始了(preflop)，清空上局赢家信息
             if (state.stage === 'preflop' || state.stage === 'waiting') {
                 currentWinners = null;
-                document.getElementById('winner-overlay')?.remove(); // 移除结算弹窗
+                document.getElementById('winner-overlay')?.remove();
             }
 
             // 1. 更新顶部信息
@@ -177,55 +401,71 @@
             const commDiv = document.getElementById('community-cards');
             commDiv.innerHTML = state.communityCards.map(c => renderCard(c)).join('');
 
-            // 2. 渲染所有玩家
+            // 2. 更新开始按钮状态
+            const startBtn = document.getElementById('start-game-btn');
+            if (myPlayer && myPlayer.isHost) {
+                startBtn.disabled = false;
+                startBtn.innerText = '🎮 开始游戏';
+            } else {
+                startBtn.disabled = true;
+                startBtn.innerText = '等待房主开始';
+            }
+            if (state.stage !== 'waiting') {
+                startBtn.style.display = 'none';
+            } else {
+                startBtn.style.display = 'inline-block';
+            }
+
+            // 3. 渲染所有玩家
             const pArea = document.getElementById('players-area');
             pArea.innerHTML = '';
 
             state.players.forEach((p, index) => {
                 const isMe = p.id === myId;
-                const isTurn = index === state.activeSeat; // 是否轮到该人
+                const isTurn = index === state.activeSeat;
                 const isDealer = index === state.dealerSeat;
 
-                // 2.1 渲染手牌 
-                // 如果是 showdown 阶段，且服务器已经下发了 winnerInfo，我们需要确保能看到所有未弃牌玩家的手牌
-                // (Server端通常会在 showdown 时把 hand 发送给所有人)
                 let handHtml = '';
                 if (p.hand && p.hand.length > 0) {
-                    // 自己、摊牌阶段、或已经结束
                     if (isMe || state.stage === 'showdown' || currentWinners) {
                         handHtml = p.hand.map(c => renderCard(c, true)).join('');
                     } else {
-                        handHtml = '<span class="card" style="background:#555; color:#ccc;">🂠</span><span class="card" style="background:#555; color:#ccc;">🂠</span>';
+                        handHtml = '<span class="card" style="background:linear-gradient(135deg,#2c3e50,#34495e); color:#ccc;">🂠</span><span class="card" style="background:linear-gradient(135deg,#2c3e50,#34495e); color:#ccc;">🂠</span>';
                     }
                 } else {
                     handHtml = '<span style="font-size:12px; color:#aaa;">等待中</span>';
                 }
 
-                // 2.2 构建 HTML
+                // 状态文本
+                let statusText = '';
+                if (p.folded) statusText = '已弃牌';
+                else if (p.chips === 0 && p.bet > 0) statusText = 'ALL IN';
+                else if (p.isWaiting) statusText = '等待下一局';
+
                 const playerHtml = `
-                    <div class="player ${isTurn ? 'active-turn' : ''} ${p.folded ? 'folded' : ''}">
+                    <div class="player ${isTurn ? 'active-turn' : ''} ${p.folded ? 'folded' : ''} ${p.isHost ? 'is-host' : ''}">
                         ${isDealer ? '<div class="dealer-btn">D</div>' : ''}
-                        <div class="p-name">${p.name}</div>
+                        <div class="p-name">${p.name}${isMe ? ' (我)' : ''}</div>
                         <div class="p-chips">💰 ${p.chips}</div>
-                        <div class="p-bet">本轮下注: ${p.bet}</div>
+                        <div class="p-bet">下注: ${p.bet}</div>
+                        ${statusText ? `<div class="p-status">${statusText}</div>` : ''}
                         <div style="margin-top:5px;">${handHtml}</div>
                     </div>
                 `;
                 pArea.innerHTML += playerHtml;
 
-                // 3. 更新操作栏状态 (仅针对自己)
                 if (isMe) {
                     const controls = document.getElementById('controls-bar');
-                    if (isTurn) {
-                        controls.style.display = 'flex'; 
+                    if (isTurn && !p.folded) {
+                        controls.style.display = 'flex';
                         updateButtonLogic(p, state.currentMaxBet);
+                        updateSliderRange(p, state);
                     } else {
                         controls.style.display = 'none';
                     }
                 }
             });
 
-            // 如果处于结算状态，重新应用高亮 (防止 render 覆盖)
             if (currentWinners) {
                 applyWinningEffects(currentWinners);
             }
@@ -233,53 +473,95 @@
 
         // --- 辅助逻辑 ---
 
-        // 渲染单张扑克牌 (增加 data-code 以便查找)
         function renderCard(cardCode, isHand=false) {
             const suit = cardCode.slice(-1); 
             const rank = cardCode.slice(0, -1);
-            const color = (suit === 'h' || suit === 'd') ? '#e74c3c' : 'black';
+            const color = (suit === 'h' || suit === 'd') ? '#e74c3c' : '#2c3e50';
             const suitIcons = {'s':'♠', 'h':'♥', 'd':'♦', 'c':'♣'};
             
-            return `<span class="card" data-code="${cardCode}" style="color:${color}; ${isHand ? 'border:1px solid gold;' : ''}">
+            return `<span class="card" data-code="${cardCode}" style="color:${color}; ${isHand ? 'border:2px solid gold;' : ''}">
                 ${rank}${suitIcons[suit]}
             </span>`;
         }
 
-        // 动态更新按钮 (Check 还是 Call?)
         function updateButtonLogic(me, maxBet) {
             const btn = document.getElementById('btn-call-check');
             const diff = maxBet - me.bet;
-            
-            // 更新输入框默认值 (最小加注: 当前最大注 + 最小加注额)
-            // gameState.minRaise 存在 state 中 (如果没有传，默认 20)
-            const minRaiseVal = currentState.minRaise || 20;
-            const targetTotal = maxBet + minRaiseVal;
-            
-            const input = document.getElementById('raise-amount');
-            // 只有当输入框没被用户修改过时，才自动更新建议值，防止用户输入一半被覆盖
-            if (document.activeElement !== input) {
-                input.value = targetTotal; 
-            }
 
             if (diff > 0) {
-            
-                // 如果是 All-in (钱不够跟)
                 if (me.chips <= diff) {
-                    btn.innerText = `All-in (${me.chips})`;
-                    btn.className = "action-btn btn-raise"; // 用红色或橙色醒目
-                    btn.dataset.action = "call"; // 依然是 call逻辑
+                    btn.innerText = `All-in ${me.chips}`;
+                    btn.className = "action-btn btn-call";
+                    btn.dataset.action = "call";
                 } else {
-                    // 需要跟注
                     btn.innerText = `跟注 ${diff}`;
                     btn.className = "action-btn btn-call";
                     btn.dataset.action = "call"; 
                 }
-
             } else {
-                // 可以过牌
-                btn.innerText = "过牌 (Check)";
+                btn.innerText = "过牌";
                 btn.className = "action-btn btn-check";
                 btn.dataset.action = "check";
+            }
+        }
+
+        function updateSliderRange(me, state) {
+            const slider = document.getElementById('raise-slider');
+            const minRaise = state.minRaise || state.bigBlind || 20;
+            const minValue = state.currentMaxBet + minRaise;
+            const maxValue = me.chips + me.bet;
+            
+            slider.min = minValue;
+            slider.max = maxValue;
+            slider.value = minValue;
+            updateRaiseDisplay();
+        }
+
+        function updateRaiseDisplay() {
+            const slider = document.getElementById('raise-slider');
+            const display = document.getElementById('raise-amount-display');
+            display.innerText = slider.value;
+        }
+
+        // 快捷加注
+        function quickRaise(type) {
+            if (!myPlayer || !currentState) return;
+            
+            const pot = currentState.pot;
+            const maxBet = currentState.currentMaxBet;
+            const minRaise = currentState.minRaise || currentState.bigBlind || 20;
+            const myBet = myPlayer.bet;
+            const myChips = myPlayer.chips;
+            
+            let targetBet = 0;
+            
+            switch(type) {
+                case 'min':
+                    targetBet = maxBet + minRaise;
+                    break;
+                case 'half':
+                    targetBet = maxBet + Math.floor(pot / 2);
+                    break;
+                case 'pot':
+                    targetBet = maxBet + pot;
+                    break;
+                case 'allin':
+                    targetBet = myBet + myChips;
+                    break;
+            }
+            
+            // 确保不超过 all-in
+            targetBet = Math.min(targetBet, myBet + myChips);
+            // 确保至少是最小加注
+            targetBet = Math.max(targetBet, maxBet + minRaise);
+            
+            const slider = document.getElementById('raise-slider');
+            slider.value = targetBet;
+            updateRaiseDisplay();
+            
+            // 如果是 all-in，直接发送
+            if (type === 'allin') {
+                socket.emit('action', { type: 'raise', amount: targetBet });
             }
         }
 
@@ -287,12 +569,12 @@
 
         function handleCallCheck() {
             const btn = document.getElementById('btn-call-check');
-            const action = btn.dataset.action; // 'call' or 'check'
+            const action = btn.dataset.action;
             socket.emit('action', { type: action });
         }
 
         function handleRaise() {
-            const val = document.getElementById('raise-amount').value;
+            const val = document.getElementById('raise-slider').value;
             if (!val) return;
             socket.emit('action', { type: 'raise', amount: parseInt(val) });
         }
@@ -306,46 +588,44 @@
         socket.on('system_msg', (msg) => {
             const logDiv = document.getElementById('logs');
             const time = new Date().toTimeString().split(' ')[0];
-            logDiv.innerHTML = `<div><span style="color:#aaa">[${time}]</span> ${msg}</div>` + logDiv.innerHTML;
+            logDiv.innerHTML = `<div><span style="color:#888">[${time}]</span> ${msg}</div>` + logDiv.innerHTML;
         });
 
         socket.on('game_over', (winners) => {
-            // 简单胜利(弃牌)
             showWinnerOverlay(winners.join('\n'), []);
         });
 
         socket.on('game_over_details', (winnerInfo) => {
-            currentWinners = winnerInfo; // 保存下来，render 时会用到
+            currentWinners = winnerInfo;
             
-            const msgLines = winnerInfo.map(w => `🏆 ${w.name} ${w.desc ? '('+w.desc+')' : ''} +${w.chips || ''}`);
-            showWinnerOverlay(msgLines.join('<br>'), winnerInfo);
+            const msgLines = winnerInfo.map(w => `🏆 ${w.name}<br><span style="font-size:14px;color:#aaa;">${w.desc || ''}</span>`);
+            showWinnerOverlay(msgLines.join('<br><br>'), winnerInfo);
             
             applyWinningEffects(winnerInfo);
         });
 
         function showWinnerOverlay(msgHtml, winnerInfo) {
-            // 避免重复创建
             if (document.getElementById('winner-overlay')) return;
 
             const div = document.createElement('div');
             div.id = 'winner-overlay';
             div.style.cssText = `
                 position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%);
-                background: rgba(0,0,0,0.9); border: 2px solid gold; padding: 20px;
-                text-align: center; border-radius: 10px; z-index: 2000; min-width: 200px;
-                box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-                animation: popin 0.5s ease;
+                background: linear-gradient(180deg, rgba(20,20,20,0.98) 0%, rgba(0,0,0,0.98) 100%);
+                border: 3px solid #f1c40f; padding: 25px 40px;
+                text-align: center; border-radius: 15px; z-index: 2000; min-width: 250px;
+                box-shadow: 0 0 50px rgba(255, 215, 0, 0.4);
+                animation: popin 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             `;
             div.innerHTML = `
-                <h2 style="color:gold; margin:0 0 10px 0;">🎉 结算 🎉</h2>
-                <div style="font-size:18px; line-height:1.5;">${msgHtml}</div>
-                <div style="margin-top:15px; font-size:12px; color:#aaa;">等待开始下一局...</div>
+                <h2 style="color:#f1c40f; margin:0 0 15px 0; font-size:24px;">🎉 结算 🎉</h2>
+                <div style="font-size:18px; line-height:1.6;">${msgHtml}</div>
+                <div style="margin-top:20px; font-size:13px; color:#666;">下一局即将开始...</div>
             `;
             document.body.appendChild(div);
 
-            // 增加简单的 css 动画
             const style = document.createElement('style');
-            style.innerHTML = `@keyframes popin { from { transform: translate(-50%, -50%) scale(0.5); opacity:0;} to { transform: translate(-50%, -50%) scale(1); opacity:1;} }`;
+            style.innerHTML = `@keyframes popin { from { transform: translate(-50%, -50%) scale(0.3); opacity:0;} to { transform: translate(-50%, -50%) scale(1); opacity:1;} }`;
             document.head.appendChild(style);
         }
 
@@ -353,13 +633,10 @@
             if (!winnerInfo) return;
             const allCards = Array.from(document.querySelectorAll('.card'));
             
-            // 1. 先移除所有旧的高亮
             allCards.forEach(c => c.classList.remove('winning-card'));
 
-            // 2. 遍历赢家
             winnerInfo.forEach(w => {
                 const winningCodes = w.cards || [];
-                // 3. 遍历 DOM 里的每一张牌
                 allCards.forEach(cardEl => {
                     const code = cardEl.dataset.code;
                     if (winningCodes.includes(code)) {
@@ -372,11 +649,11 @@
         function translateStage(stage) {
             const map = {
                 'waiting': '等待开始',
-                'preflop': '翻牌前 (Pre-flop)',
-                'flop': '翻牌圈 (Flop)',
-                'turn': '转牌圈 (Turn)',
-                'river': '河牌圈 (River)',
-                'showdown': '摊牌结算'
+                'preflop': '翻牌前',
+                'flop': '翻牌圈',
+                'turn': '转牌圈',
+                'river': '河牌圈',
+                'showdown': '摊牌'
             };
             return map[stage] || stage;
         }
