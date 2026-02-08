@@ -286,7 +286,27 @@ function calculateWinner() {
     }
     
     gameState.pot = 0;
+
+    // 构建所有玩家的手牌与牌型信息
+    const allHands = gameState.players.map(p => {
+        const isWinner = winnerInfo.some(w => w.name === p.name);
+        let handDesc = '';
+        if (!p.folded && p.solvedHand) {
+            handDesc = p.solvedHand.descr;
+        } else if (p.folded) {
+            handDesc = '已弃牌';
+        }
+        return {
+            name: p.name,
+            hand: p.hand || [],
+            desc: handDesc,
+            folded: p.folded,
+            isWinner: isWinner
+        };
+    });
+
     io.emit('game_over_details', winnerInfo);
+    io.emit('showdown_hands', allHands);
     
     gameState.players.forEach(p => p.totalHandBet = 0);
     io.emit('update_state', gameState);
