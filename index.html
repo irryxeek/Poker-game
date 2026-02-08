@@ -110,15 +110,16 @@
             position: relative;
             width: 90%;
             max-width: 420px;
-            height: 240px;
-            margin: 60px auto 80px;
+            height: 280px;
+            margin: 90px auto 100px;
             background: linear-gradient(145deg, #1a5c32 0%, #2d7a4a 50%, #1a5c32 100%);
-            border-radius: 120px;
+            border-radius: 140px;
             border: 6px solid #8B4513;
             box-shadow: 
                 inset 0 0 40px rgba(0,0,0,0.3),
                 0 8px 25px rgba(0,0,0,0.5),
                 0 0 0 3px #654321;
+            overflow: visible;
         }
         .table-felt {
             position: absolute;
@@ -153,44 +154,44 @@
         }
         
         /* 玩家位置 - 通用 fallback（8人以上） */
-        .player.seat-0 { top: -70px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
-        .player.seat-1 { top: 10px; right: -55px; bottom: auto; left: auto; transform: none; }
+        .player.seat-0 { top: -75px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
+        .player.seat-1 { top: -25px; right: -55px; bottom: auto; left: auto; transform: none; }
         .player.seat-2 { top: 50%; right: -60px; bottom: auto; left: auto; transform: translateY(-50%); }
-        .player.seat-3 { top: auto; right: -55px; bottom: 10px; left: auto; transform: none; }
-        .player.seat-4 { top: auto; right: auto; bottom: -70px; left: 50%; transform: translateX(-50%); }
-        .player.seat-5 { top: auto; right: auto; bottom: 10px; left: -55px; transform: none; }
+        .player.seat-3 { top: auto; right: -55px; bottom: -55px; left: auto; transform: none; }
+        .player.seat-4 { top: auto; right: auto; bottom: -75px; left: 50%; transform: translateX(-50%); }
+        .player.seat-5 { top: auto; right: auto; bottom: -55px; left: -55px; transform: none; }
         .player.seat-6 { top: 50%; right: auto; bottom: auto; left: -60px; transform: translateY(-50%); }
-        .player.seat-7 { top: 10px; right: auto; bottom: auto; left: -55px; transform: none; }
+        .player.seat-7 { top: -25px; right: auto; bottom: auto; left: -55px; transform: none; }
         
         /* 2人模式 */
-        .players-2 .player.seat-0 { top: -70px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
-        .players-2 .player.seat-1 { top: auto; right: auto; bottom: -70px; left: 50%; transform: translateX(-50%); }
+        .players-2 .player.seat-0 { top: -75px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
+        .players-2 .player.seat-1 { top: auto; right: auto; bottom: -75px; left: 50%; transform: translateX(-50%); }
         
         /* 3人模式 */
-        .players-3 .player.seat-0 { top: -70px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
-        .players-3 .player.seat-1 { top: auto; right: -45px; bottom: 10px; left: auto; transform: none; }
-        .players-3 .player.seat-2 { top: auto; right: auto; bottom: 10px; left: -45px; transform: none; }
+        .players-3 .player.seat-0 { top: -75px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
+        .players-3 .player.seat-1 { top: auto; right: -50px; bottom: -30px; left: auto; transform: none; }
+        .players-3 .player.seat-2 { top: auto; right: auto; bottom: -30px; left: -50px; transform: none; }
         
         /* 4人模式 */
-        .players-4 .player.seat-0 { top: -70px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
+        .players-4 .player.seat-0 { top: -75px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
         .players-4 .player.seat-1 { top: 50%; right: -60px; bottom: auto; left: auto; transform: translateY(-50%); }
-        .players-4 .player.seat-2 { top: auto; right: auto; bottom: -70px; left: 50%; transform: translateX(-50%); }
+        .players-4 .player.seat-2 { top: auto; right: auto; bottom: -75px; left: 50%; transform: translateX(-50%); }
         .players-4 .player.seat-3 { top: 50%; right: auto; bottom: auto; left: -60px; transform: translateY(-50%); }
         
-        /* 5人模式 */
-        .players-5 .player.seat-0 { top: -70px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
-        .players-5 .player.seat-1 { top: 30%; right: -55px; bottom: auto; left: auto; transform: none; }
-        .players-5 .player.seat-2 { top: auto; right: -45px; bottom: 0; left: auto; transform: none; }
-        .players-5 .player.seat-3 { top: auto; right: auto; bottom: 0; left: -45px; transform: none; }
-        .players-5 .player.seat-4 { top: 30%; right: auto; bottom: auto; left: -55px; transform: none; }
+        /* 5人模式 - 两侧玩家推到桌外防止重叠 */
+        .players-5 .player.seat-0 { top: -75px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
+        .players-5 .player.seat-1 { top: -25px; right: -55px; bottom: auto; left: auto; transform: none; }
+        .players-5 .player.seat-2 { top: auto; right: -50px; bottom: -55px; left: auto; transform: none; }
+        .players-5 .player.seat-3 { top: auto; right: auto; bottom: -55px; left: -50px; transform: none; }
+        .players-5 .player.seat-4 { top: -25px; right: auto; bottom: auto; left: -55px; transform: none; }
         
-        /* 6人模式 */
-        .players-6 .player.seat-0 { top: -70px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
-        .players-6 .player.seat-1 { top: 20%; right: -55px; bottom: auto; left: auto; transform: none; }
-        .players-6 .player.seat-2 { top: auto; right: -55px; bottom: 20%; left: auto; transform: none; }
-        .players-6 .player.seat-3 { top: auto; right: auto; bottom: -70px; left: 50%; transform: translateX(-50%); }
-        .players-6 .player.seat-4 { top: auto; right: auto; bottom: 20%; left: -55px; transform: none; }
-        .players-6 .player.seat-5 { top: 20%; right: auto; bottom: auto; left: -55px; transform: none; }
+        /* 6人模式 - 两侧玩家推到桌外防止重叠 */
+        .players-6 .player.seat-0 { top: -75px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
+        .players-6 .player.seat-1 { top: -25px; right: -55px; bottom: auto; left: auto; transform: none; }
+        .players-6 .player.seat-2 { top: auto; right: -55px; bottom: -55px; left: auto; transform: none; }
+        .players-6 .player.seat-3 { top: auto; right: auto; bottom: -75px; left: 50%; transform: translateX(-50%); }
+        .players-6 .player.seat-4 { top: auto; right: auto; bottom: -55px; left: -55px; transform: none; }
+        .players-6 .player.seat-5 { top: -25px; right: auto; bottom: auto; left: -55px; transform: none; }
         
         /* 状态修饰 */
         .active-turn { 
@@ -199,7 +200,7 @@
             background: linear-gradient(180deg, rgba(241, 196, 15, 0.2) 0%, rgba(0,0,0,0.6) 100%); 
             z-index: 10;
         }
-        /* 保持正确的 transform 属性 - translateX(-50%) 居中的座位 */
+        /* 保持正确的 transform - translateX(-50%) 居中的座位 */
         .player.seat-0.active-turn, .player.seat-4.active-turn,
         .players-2 .player.seat-0.active-turn, .players-2 .player.seat-1.active-turn,
         .players-3 .player.seat-0.active-turn,
@@ -210,6 +211,8 @@
         .player.seat-2.active-turn, .player.seat-6.active-turn,
         .players-4 .player.seat-1.active-turn, .players-4 .player.seat-3.active-turn { transform: translateY(-50%) scale(1.05); }
         /* 无 translate 的座位 */
+        .player.seat-1.active-turn, .player.seat-3.active-turn,
+        .player.seat-5.active-turn, .player.seat-7.active-turn,
         .players-3 .player.seat-1.active-turn, .players-3 .player.seat-2.active-turn,
         .players-5 .player.seat-1.active-turn, .players-5 .player.seat-2.active-turn,
         .players-5 .player.seat-3.active-turn, .players-5 .player.seat-4.active-turn,
