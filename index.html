@@ -194,18 +194,19 @@
         /* === 底池 === */
         .pot-display {
             position: absolute;
-            top: 30%;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.6);
-            padding: 6px 20px;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.75);
+            padding: 8px 24px;
             border-radius: 20px;
             font-size: 16px;
             font-weight: bold;
             color: #fff;
             white-space: nowrap;
-            z-index: 5;
-            border: 1px solid rgba(255,255,255,0.15);
+            z-index: 15;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(8px);
         }
         .pot-label { color: #ccc; }
         .pot-amount { color: #fff; }
@@ -213,12 +214,12 @@
         /* === 公共牌 === */
         #community-cards {
             position: absolute;
-            top: 50%;
+            top: 35%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
             gap: 6px;
-            z-index: 5;
+            z-index: 10;
         }
 
         /* === 扑克牌样式 === */
@@ -321,7 +322,7 @@
 
         /* === 玩家卡片 === */
         .player-box {
-            background: rgba(15, 20, 35, 0.92);
+            background: rgba(15, 20, 35, 0.95);
             border: 2px solid rgba(255,255,255,0.15);
             border-radius: 12px;
             padding: 7px 8px;
@@ -332,6 +333,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
         .player-box.active-turn {
             border-color: var(--accent);
@@ -453,6 +455,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            pointer-events: none;
         }
         .chip-icon {
             width: 28px;
@@ -469,22 +472,23 @@
             box-shadow: 1px 2px 4px rgba(0,0,0,0.4);
         }
         .chip-amount {
-            background: rgba(0,0,0,0.7);
-            padding: 2px 6px;
-            border-radius: 8px;
+            background: rgba(0,0,0,0.85);
+            padding: 3px 8px;
+            border-radius: 10px;
             font-size: 12px;
             font-weight: 700;
             color: var(--accent);
             white-space: nowrap;
+            border: 1px solid rgba(89,211,255,0.3);
         }
 
         /* 筹码位置 - 6人 */
-        .bet-chip.bet-pos-0 { top: 20%; left: 50%; transform: translateX(-50%); }
-        .bet-chip.bet-pos-1 { top: 28%; right: 18%; }
-        .bet-chip.bet-pos-2 { bottom: 28%; right: 18%; }
-        .bet-chip.bet-pos-3 { bottom: 20%; left: 50%; transform: translateX(-50%); }
-        .bet-chip.bet-pos-4 { bottom: 28%; left: 18%; }
-        .bet-chip.bet-pos-5 { top: 28%; left: 18%; }
+        .bet-chip.bet-pos-0 { top: 15%; left: 50%; transform: translateX(-50%); }
+        .bet-chip.bet-pos-1 { top: 25%; right: 15%; }
+        .bet-chip.bet-pos-2 { bottom: 25%; right: 15%; }
+        .bet-chip.bet-pos-3 { bottom: 15%; left: 50%; transform: translateX(-50%); }
+        .bet-chip.bet-pos-4 { bottom: 25%; left: 15%; }
+        .bet-chip.bet-pos-5 { top: 25%; left: 15%; }
 
         /* === 弃牌标记 === */
         .fold-label {
@@ -1068,49 +1072,93 @@
                 border-left: none;
                 border-top: 1px solid rgba(255,255,255,0.08);
             }
-            .table-area { min-height: 55vh; }
-            .poker-table-container { max-width: 92%; }
-            .player-box { min-width: 90px; padding: 5px 6px; gap: 5px; border-radius: 8px; }
-            .player-avatar { width: 24px; height: 24px; font-size: 11px; }
-            .p-name { font-size: 11px; max-width: 50px; }
-            .p-chips { font-size: 11px; }
+            .table-area { min-height: 55vh; padding: 10px; }
+            .poker-table-container { max-width: 95%; aspect-ratio: 1.6 / 1; }
+            
+            /* 移动端底池位置优化 */
+            .pot-display {
+                top: 50%;
+                font-size: 14px;
+                padding: 6px 18px;
+                z-index: 20;
+            }
+            
+            /* 移动端公共牌位置优化 */
+            #community-cards {
+                top: 32%;
+                gap: 4px;
+            }
+            #community-cards .card {
+                width: 42px;
+                height: 58px;
+                font-size: 14px;
+            }
+            #community-cards .card .card-rank { font-size: 15px; }
+            #community-cards .card .card-suit { font-size: 17px; }
+            
+            /* 移动端玩家框优化 */
+            .player-box { 
+                min-width: 85px; 
+                padding: 4px 5px; 
+                gap: 4px; 
+                border-radius: 8px;
+                font-size: 11px;
+            }
+            .player-avatar { width: 22px; height: 22px; font-size: 10px; }
+            .p-name { font-size: 10px; max-width: 45px; }
+            .p-chips { font-size: 10px; }
             .p-loan { display: none; }
-            .position-badge { font-size: 9px; padding: 1px 4px; }
-            .player-cards .card { width: 24px; height: 34px; font-size: 9px; }
-            .player-cards .card .card-rank { font-size: 11px; }
-            .player-cards .card .card-suit { font-size: 12px; }
-            .start-btn-container { bottom: 10%; }
-            .btn-start-game { padding: 10px 24px; font-size: 15px; }
+            .position-badge { font-size: 8px; padding: 1px 3px; }
+            .player-cards .card { width: 22px; height: 30px; font-size: 8px; }
+            .player-cards .card .card-rank { font-size: 10px; }
+            .player-cards .card .card-suit { font-size: 11px; }
+            
+            /* 移动端开始按钮 */
+            .start-btn-container { bottom: 8%; }
+            .btn-start-game { padding: 8px 20px; font-size: 14px; }
+
+            /* 移动端筹码位置优化 */
+            .bet-chip { z-index: 12; }
+            .chip-icon { width: 22px; height: 22px; font-size: 7px; border-width: 2px; }
+            .chip-amount { font-size: 10px; padding: 1px 4px; }
 
             /* 移动端 2人 */
-            .players-2 .player-wrapper.seat-0 { top: -14%; }
-            .players-2 .player-wrapper.seat-1 { bottom: -14%; }
+            .players-2 .player-wrapper.seat-0 { top: -16%; }
+            .players-2 .player-wrapper.seat-1 { bottom: -16%; }
 
             /* 移动端 3人 */
-            .players-3 .player-wrapper.seat-0 { top: -14%; }
-            .players-3 .player-wrapper.seat-1 { bottom: -8%; right: 2%; }
-            .players-3 .player-wrapper.seat-2 { bottom: -8%; left: 2%; }
+            .players-3 .player-wrapper.seat-0 { top: -16%; }
+            .players-3 .player-wrapper.seat-1 { bottom: -10%; right: 0%; }
+            .players-3 .player-wrapper.seat-2 { bottom: -10%; left: 0%; }
 
             /* 移动端 4人 */
-            .players-4 .player-wrapper.seat-0 { top: -14%; }
-            .players-4 .player-wrapper.seat-1 { top: 30%; right: -6%; }
-            .players-4 .player-wrapper.seat-2 { bottom: -14%; }
-            .players-4 .player-wrapper.seat-3 { top: 30%; left: -6%; }
+            .players-4 .player-wrapper.seat-0 { top: -16%; }
+            .players-4 .player-wrapper.seat-1 { top: 28%; right: -8%; }
+            .players-4 .player-wrapper.seat-2 { bottom: -16%; }
+            .players-4 .player-wrapper.seat-3 { top: 28%; left: -8%; }
 
             /* 移动端 5人 */
-            .players-5 .player-wrapper.seat-0 { top: -14%; }
-            .players-5 .player-wrapper.seat-1 { top: 10%; right: -8%; }
-            .players-5 .player-wrapper.seat-2 { bottom: -10%; right: 8%; }
-            .players-5 .player-wrapper.seat-3 { bottom: -10%; left: 8%; }
-            .players-5 .player-wrapper.seat-4 { top: 10%; left: -8%; }
+            .players-5 .player-wrapper.seat-0 { top: -16%; }
+            .players-5 .player-wrapper.seat-1 { top: 8%; right: -10%; }
+            .players-5 .player-wrapper.seat-2 { bottom: -12%; right: 6%; }
+            .players-5 .player-wrapper.seat-3 { bottom: -12%; left: 6%; }
+            .players-5 .player-wrapper.seat-4 { top: 8%; left: -10%; }
 
-            /* 移动端 6人 */
-            .player-wrapper.seat-0 { top: -14%; }
-            .player-wrapper.seat-1 { top: 8%; right: -8%; }
-            .player-wrapper.seat-2 { bottom: 8%; right: -8%; }
-            .player-wrapper.seat-3 { bottom: -14%; }
-            .player-wrapper.seat-4 { bottom: 8%; left: -8%; }
-            .player-wrapper.seat-5 { top: 8%; left: -8%; }
+            /* 移动端 6人 - 关键优化：拉开玩家框与中心区域的距离 */
+            .player-wrapper.seat-0 { top: -16%; }
+            .player-wrapper.seat-1 { top: 6%; right: -10%; }
+            .player-wrapper.seat-2 { bottom: 6%; right: -10%; }
+            .player-wrapper.seat-3 { bottom: -16%; }
+            .player-wrapper.seat-4 { bottom: 6%; left: -10%; }
+            .player-wrapper.seat-5 { top: 6%; left: -10%; }
+            
+            /* 移动端筹码位置 - 更靠近边缘 */
+            .bet-chip.bet-pos-0 { top: 10%; left: 50%; }
+            .bet-chip.bet-pos-1 { top: 20%; right: 12%; }
+            .bet-chip.bet-pos-2 { bottom: 20%; right: 12%; }
+            .bet-chip.bet-pos-3 { bottom: 10%; left: 50%; }
+            .bet-chip.bet-pos-4 { bottom: 20%; left: 12%; }
+            .bet-chip.bet-pos-5 { top: 20%; left: 12%; }
         }
     </style>
 </head>
