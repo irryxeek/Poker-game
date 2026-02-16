@@ -499,13 +499,35 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
         }
 
-        /* 筹码位置 - 6人 */
+        /* 筹码位置 - 默认6人 */
         .bet-chip.bet-pos-0 { top: 15%; left: 50%; transform: translateX(-50%); }
         .bet-chip.bet-pos-1 { top: 25%; right: 15%; }
         .bet-chip.bet-pos-2 { bottom: 25%; right: 15%; }
         .bet-chip.bet-pos-3 { bottom: 15%; left: 50%; transform: translateX(-50%); }
         .bet-chip.bet-pos-4 { bottom: 25%; left: 15%; }
         .bet-chip.bet-pos-5 { top: 25%; left: 15%; }
+
+        /* 筹码位置 - 2人 */
+        .table-players-2 .bet-chip.bet-pos-0 { top: 12%; left: 50%; transform: translateX(-50%); right: auto; bottom: auto; }
+        .table-players-2 .bet-chip.bet-pos-1 { bottom: 12%; left: 50%; transform: translateX(-50%); top: auto; right: auto; }
+
+        /* 筹码位置 - 3人 */
+        .table-players-3 .bet-chip.bet-pos-0 { top: 12%; left: 50%; transform: translateX(-50%); right: auto; bottom: auto; }
+        .table-players-3 .bet-chip.bet-pos-1 { bottom: 22%; right: 15%; transform: none; top: auto; left: auto; }
+        .table-players-3 .bet-chip.bet-pos-2 { bottom: 22%; left: 15%; transform: none; top: auto; right: auto; }
+
+        /* 筹码位置 - 4人 */
+        .table-players-4 .bet-chip.bet-pos-0 { top: 12%; left: 50%; transform: translateX(-50%); right: auto; bottom: auto; }
+        .table-players-4 .bet-chip.bet-pos-1 { top: 38%; right: 8%; transform: none; left: auto; bottom: auto; }
+        .table-players-4 .bet-chip.bet-pos-2 { bottom: 12%; left: 50%; transform: translateX(-50%); top: auto; right: auto; }
+        .table-players-4 .bet-chip.bet-pos-3 { top: 38%; left: 8%; transform: none; right: auto; bottom: auto; }
+
+        /* 筹码位置 - 5人 */
+        .table-players-5 .bet-chip.bet-pos-0 { top: 12%; left: 50%; transform: translateX(-50%); right: auto; bottom: auto; }
+        .table-players-5 .bet-chip.bet-pos-1 { top: 22%; right: 12%; transform: none; left: auto; bottom: auto; }
+        .table-players-5 .bet-chip.bet-pos-2 { bottom: 18%; right: 15%; transform: none; top: auto; left: auto; }
+        .table-players-5 .bet-chip.bet-pos-3 { bottom: 18%; left: 15%; transform: none; top: auto; right: auto; }
+        .table-players-5 .bet-chip.bet-pos-4 { top: 22%; left: 12%; transform: none; right: auto; bottom: auto; }
 
         /* === 弃牌标记 === */
         .fold-label {
@@ -1197,13 +1219,35 @@
             .player-wrapper.seat-4 { bottom: 6%; left: -10%; }
             .player-wrapper.seat-5 { top: 6%; left: -10%; }
             
-            /* 移动端筹码位置 - 更靠近边缘 */
+            /* 移动端筹码位置 - 默认6人 */
             .bet-chip.bet-pos-0 { top: 10%; left: 50%; }
             .bet-chip.bet-pos-1 { top: 20%; right: 12%; }
             .bet-chip.bet-pos-2 { bottom: 20%; right: 12%; }
             .bet-chip.bet-pos-3 { bottom: 10%; left: 50%; }
             .bet-chip.bet-pos-4 { bottom: 20%; left: 12%; }
             .bet-chip.bet-pos-5 { top: 20%; left: 12%; }
+
+            /* 移动端筹码位置 - 2人 */
+            .table-players-2 .bet-chip.bet-pos-0 { top: 8%; left: 50%; transform: translateX(-50%); right: auto; bottom: auto; }
+            .table-players-2 .bet-chip.bet-pos-1 { bottom: 8%; left: 50%; transform: translateX(-50%); top: auto; right: auto; }
+
+            /* 移动端筹码位置 - 3人 */
+            .table-players-3 .bet-chip.bet-pos-0 { top: 8%; left: 50%; transform: translateX(-50%); right: auto; bottom: auto; }
+            .table-players-3 .bet-chip.bet-pos-1 { bottom: 18%; right: 12%; transform: none; top: auto; left: auto; }
+            .table-players-3 .bet-chip.bet-pos-2 { bottom: 18%; left: 12%; transform: none; top: auto; right: auto; }
+
+            /* 移动端筹码位置 - 4人 */
+            .table-players-4 .bet-chip.bet-pos-0 { top: 8%; left: 50%; transform: translateX(-50%); right: auto; bottom: auto; }
+            .table-players-4 .bet-chip.bet-pos-1 { top: 35%; right: 6%; transform: none; left: auto; bottom: auto; }
+            .table-players-4 .bet-chip.bet-pos-2 { bottom: 8%; left: 50%; transform: translateX(-50%); top: auto; right: auto; }
+            .table-players-4 .bet-chip.bet-pos-3 { top: 35%; left: 6%; transform: none; right: auto; bottom: auto; }
+
+            /* 移动端筹码位置 - 5人 */
+            .table-players-5 .bet-chip.bet-pos-0 { top: 8%; left: 50%; transform: translateX(-50%); right: auto; bottom: auto; }
+            .table-players-5 .bet-chip.bet-pos-1 { top: 18%; right: 10%; transform: none; left: auto; bottom: auto; }
+            .table-players-5 .bet-chip.bet-pos-2 { bottom: 15%; right: 12%; transform: none; top: auto; left: auto; }
+            .table-players-5 .bet-chip.bet-pos-3 { bottom: 15%; left: 12%; transform: none; top: auto; right: auto; }
+            .table-players-5 .bet-chip.bet-pos-4 { top: 18%; left: 10%; transform: none; right: auto; bottom: auto; }
         }
     </style>
 </head>
@@ -1399,7 +1443,7 @@
         let turnTimeLeft = 0;
         let isPaused = false;
         const playerLoanCount = {};
-        const playerLastChips = {};
+        const playerPrevChips = {};
 
         socket.on('connect', () => {
             myId = socket.id;
@@ -1603,6 +1647,17 @@
                 document.getElementById('hand-number').innerText = handCount;
                 currentWinners = null;
                 removeWinnerOverlay();
+
+                // 借款统计：仅在进入新一局(preflop)时检测一次
+                state.players.forEach(p => {
+                    if (playerLoanCount[p.id] == null) {
+                        playerLoanCount[p.id] = 0;
+                    }
+                    const prevChips = playerPrevChips[p.id];
+                    if (prevChips != null && prevChips <= 0 && p.chips > 0) {
+                        playerLoanCount[p.id] += 1;
+                    }
+                });
             }
             
             // 回到等待状态 - 清除结算画面
@@ -1667,6 +1722,21 @@
             if (currentWinners) {
                 applyWinningEffects(currentWinners);
             }
+
+            // 更新筹码快照（供下一次进入preflop时做借款检测）
+            const currentIds = new Set(state.players.map(p => p.id));
+            state.players.forEach(p => {
+                playerPrevChips[p.id] = p.chips;
+                if (playerLoanCount[p.id] == null) {
+                    playerLoanCount[p.id] = 0;
+                }
+            });
+            Object.keys(playerPrevChips).forEach(id => {
+                if (!currentIds.has(id)) delete playerPrevChips[id];
+            });
+            Object.keys(playerLoanCount).forEach(id => {
+                if (!currentIds.has(id)) delete playerLoanCount[id];
+            });
         });
 
         // ========================================
@@ -1675,9 +1745,11 @@
         function renderPlayers(state) {
             const pArea = document.getElementById('players-area');
             const betArea = document.getElementById('bet-chips-area');
+            const pokerTable = document.getElementById('poker-table');
             pArea.innerHTML = '';
             betArea.innerHTML = '';
             pArea.className = `players-${state.players.length}`;
+            pokerTable.className = `poker-table table-players-${state.players.length}`;
 
             state.players.forEach((p, index) => {
                 const isMe = p.id === myId;
@@ -1685,24 +1757,6 @@
                 const posName = getPositionName(index, state.dealerSeat, state.players.length);
                 const posClass = getPositionClass(posName);
 
-                // 借款逻辑修正：只在新局开始时（preflop阶段）检测
-                if (state.stage === 'preflop') {
-                    // 初始化借款计数
-                    if (playerLoanCount[p.id] == null) {
-                        playerLoanCount[p.id] = 0;
-                    }
-                    
-                    // 检测是否发生借款：上一局结束时筹码为0，本局有筹码
-                    if (playerLastChips[p.id] != null && playerLastChips[p.id] === 0 && p.chips > 0) {
-                        playerLoanCount[p.id] += 1;
-                    }
-                }
-                
-                // 在waiting阶段更新最后筹码记录
-                if (state.stage === 'waiting') {
-                    playerLastChips[p.id] = p.chips;
-                }
-                
                 // 初始化借款计数（如果是新玩家）
                 if (playerLoanCount[p.id] == null) {
                     playerLoanCount[p.id] = 0;
