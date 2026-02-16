@@ -211,6 +211,7 @@
             border: 2px solid rgba(89, 211, 255, 0.3);
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 20px rgba(89, 211, 255, 0.15);
+            pointer-events: none;
         }
         .pot-label { color: #94a3b8; font-size: 14px; }
         .pot-amount { color: #59d3ff; font-size: 18px; margin-left: 4px; text-shadow: 0 0 10px rgba(89, 211, 255, 0.5); }
@@ -1124,9 +1125,11 @@
             
             /* 移动端底池位置优化 */
             .pot-display {
-                top: 50%;
-                font-size: 15px;
-                padding: 8px 22px;
+                top: -10%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 14px;
+                padding: 6px 16px;
                 z-index: 20;
             }
             
