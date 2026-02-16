@@ -298,14 +298,13 @@
         .player-wrapper.seat-5 { top: 12%; left: -2%; }
 
         /* 2人定位 */
-        .players-2 .player-wrapper.seat-0 { top: 6%; left: 50%; transform: translate(-50%, -50%); }
-        .players-2 .player-wrapper.seat-1 { bottom: 6%; left: 50%; transform: translate(-50%, 50%); }
-        .players-2 .player-box { min-width: 170px; }
+        .players-2 .player-wrapper.seat-0 { top: -12%; left: 50%; transform: translateX(-50%); }
+        .players-2 .player-wrapper.seat-1 { bottom: -12%; left: 50%; transform: translateX(-50%); }
 
         /* 3人定位 */
-        .players-3 .player-wrapper.seat-0 { top: -10%; left: 50%; transform: translateX(-50%); }
-        .players-3 .player-wrapper.seat-1 { bottom: 5%; right: 2%; }
-        .players-3 .player-wrapper.seat-2 { bottom: 5%; left: 2%; }
+        .players-3 .player-wrapper.seat-0 { top: -12%; left: 50%; transform: translateX(-50%); }
+        .players-3 .player-wrapper.seat-1 { bottom: -6%; right: 8%; }
+        .players-3 .player-wrapper.seat-2 { bottom: -6%; left: 8%; }
 
         /* 4人定位 */
         .players-4 .player-wrapper.seat-0 { top: -10%; left: 50%; transform: translateX(-50%); }
@@ -434,6 +433,19 @@
             color: var(--muted);
         }
 
+        /* === 开始按钮 === */
+        .start-btn-container {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+        }
+        .players-2 ~ .start-btn-container,
+        .players-3 ~ .start-btn-container {
+            bottom: 15%;
+        }
+
         /* === 下注筹码 (牌桌上) === */
         .bet-chip {
             position: absolute;
@@ -553,14 +565,7 @@
         #logs::-webkit-scrollbar { width: 3px; }
         #logs::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
 
-        /* === 开始按钮 === */
-        .start-btn-container {
-            position: absolute;
-            bottom: 30%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20;
-        }
+        /* start-btn-container moved to above bet-chip */
         .btn-start-game {
             padding: 14px 40px;
             background: linear-gradient(135deg, #4c9bff 0%, #59d3ff 100%);
@@ -1068,20 +1073,16 @@
             .player-box { min-width: 104px; padding: 6px 6px; }
             .player-cards .card { width: 26px; height: 36px; font-size: 10px; }
             .start-btn-container {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                transform: none;
-                margin: 10px auto 0;
+                bottom: 12%;
             }
             .btn-start-game { padding: 12px 28px; font-size: 16px; }
         }
         @media (max-width: 520px) {
-            .players-2 .player-wrapper.seat-0 { top: -6%; }
-            .players-2 .player-wrapper.seat-1 { bottom: -6%; }
-            .players-2 .player-box { min-width: 130px; }
-            .players-3 .player-wrapper.seat-1 { bottom: -2%; right: 4%; }
-            .players-3 .player-wrapper.seat-2 { bottom: -2%; left: 4%; }
+            .players-2 .player-wrapper.seat-0 { top: -10%; }
+            .players-2 .player-wrapper.seat-1 { bottom: -10%; }
+            .players-3 .player-wrapper.seat-0 { top: -10%; }
+            .players-3 .player-wrapper.seat-1 { bottom: -4%; right: 2%; }
+            .players-3 .player-wrapper.seat-2 { bottom: -4%; left: 2%; }
         }
     </style>
 </head>
