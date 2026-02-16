@@ -340,6 +340,11 @@ function finishGame(winner) {
 // ------------------------------------------
 io.on('connection', (socket) => {
     socket.on('join', (name) => {
+        if (gameState.players.length >= 9) {
+            socket.emit('system_msg', '房间已满（最多9人）');
+            return;
+        }
+
         const isFirstPlayer = gameState.players.length === 0;
         const isGameInProgress = gameState.stage !== 'waiting';
         

@@ -1594,16 +1594,123 @@
             if (numPlayers === 5) {
                 return ['BTN', 'SB', 'BB', 'UTG', 'CO'][offset];
             }
-            // 6人
-            return ['BTN', 'SB', 'BB', 'UTG', 'MP', 'CO'][offset];
+            if (numPlayers === 6) {
+                return ['BTN', 'SB', 'BB', 'UTG', 'MP', 'CO'][offset];
+            }
+            if (numPlayers === 7) {
+                return ['BTN', 'SB', 'BB', 'UTG', 'MP', 'HJ', 'CO'][offset];
+            }
+            if (numPlayers === 8) {
+                return ['BTN', 'SB', 'BB', 'UTG', 'UTG+1', 'LJ', 'HJ', 'CO'][offset];
+            }
+            return ['BTN', 'SB', 'BB', 'UTG', 'UTG+1', 'UTG+2', 'LJ', 'HJ', 'CO'][offset];
         }
 
         function getPositionClass(posName) {
             const map = {
                 'BTN': 'pos-btn', 'SB': 'pos-sb', 'BB': 'pos-bb',
-                'UTG': 'pos-utg', 'MP': 'pos-mp', 'HJ': 'pos-hj', 'CO': 'pos-co'
+                'UTG': 'pos-utg', 'UTG+1': 'pos-utg', 'UTG+2': 'pos-utg',
+                'MP': 'pos-mp', 'LJ': 'pos-mp', 'HJ': 'pos-hj', 'CO': 'pos-co'
             };
             return map[posName] || 'pos-utg';
+        }
+
+        function getSeatTemplate(numPlayers) {
+            const templates = {
+                2: [0, 1],
+                3: [0, 3, 5],
+                4: [0, 2, 5, 7],
+                5: [0, 2, 4, 5, 7],
+                6: [0, 1, 3, 5, 7, 8],
+                7: [0, 1, 2, 4, 5, 7, 8],
+                8: [0, 1, 2, 3, 5, 6, 7, 8],
+                9: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+            };
+            return templates[numPlayers] || templates[9];
+        }
+
+        function getSeatAnchorIndex(numPlayers) {
+            const template = getSeatTemplate(numPlayers);
+            const anchorByBottomCenter = template.indexOf(5);
+            if (anchorByBottomCenter >= 0) return anchorByBottomCenter;
+            return Math.floor(template.length / 2);
+        }
+
+        function getVisualSeatIndex(playerIndex, numPlayers, mySeatIndex) {
+            const seatTemplate = getSeatTemplate(numPlayers);
+            const anchorIndex = getSeatAnchorIndex(numPlayers);
+            const safeMySeat = mySeatIndex >= 0 ? mySeatIndex : 0;
+            const relativeOffset = (playerIndex - safeMySeat + numPlayers) % numPlayers;
+            const visualOrderIndex = (anchorIndex + relativeOffset) % numPlayers;
+            return seatTemplate[visualOrderIndex];
+        }
+
+        function getSeatCoordinates(isMobile = false) {
+            if (isMobile) {
+                return {
+                    0: { x: 50, y: -14 },
+                    1: { x: 68, y: -8 },
+                    2: { x: 85, y: 8 },
+                    3: { x: 90, y: 34 },
+                    4: { x: 78, y: 78 },
+                    5: { x: 50, y: 96 },
+                    6: { x: 22, y: 78 },
+                    7: { x: 10, y: 34 },
+                    8: { x: 15, y: 8 }
+                };
+            }
+            return {
+                0: { x: 50, y: -8 },
+                1: { x: 68, y: 2 },
+                2: { x: 85, y: 14 },
+                3: { x: 90, y: 40 },
+                4: { x: 78, y: 78 },
+                5: { x: 50, y: 94 },
+                6: { x: 22, y: 78 },
+                7: { x: 10, y: 40 },
+                8: { x: 15, y: 14 }
+            };
+        }
+
+        function getBetCoordinates(isMobile = false) {
+            if (isMobile) {
+                return {
+                    0: { x: 50, y: 14 },
+                    1: { x: 63, y: 18 },
+                    2: { x: 74, y: 28 },
+                    3: { x: 76, y: 46 },
+                    4: { x: 64, y: 62 },
+                    5: { x: 50, y: 68 },
+                    6: { x: 36, y: 62 },
+                    7: { x: 24, y: 46 },
+                    8: { x: 26, y: 28 }
+                };
+            }
+            return {
+                0: { x: 50, y: 18 },
+                1: { x: 63, y: 22 },
+                2: { x: 74, y: 30 },
+                3: { x: 76, y: 48 },
+                4: { x: 64, y: 64 },
+                5: { x: 50, y: 70 },
+                6: { x: 36, y: 64 },
+                7: { x: 24, y: 48 },
+                8: { x: 26, y: 30 }
+            };
+        }
+
+        function getPlayerSeatStyle(seatIndex) {
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+            const points = getSeatCoordinates(isMobile);
+            const p = points[seatIndex] || points[0];
+            return `top:${p.y}%;left:${p.x}%;transform:translate(-50%, -50%);`;
+        }
+
+        function getBetSeatStyle(seatIndex) {
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+            const points = getBetCoordinates(isMobile);
+            const p = points[seatIndex] || points[0];
+            return `top:${p.y}%;left:${p.x}%;right:auto;bottom:auto;transform:translate(-50%, -50%);`;
         }
 
         // ========================================
@@ -1751,11 +1858,14 @@
             pArea.className = `players-${state.players.length}`;
             pokerTable.className = `poker-table table-players-${state.players.length}`;
 
+            const mySeatIndex = state.players.findIndex(player => player.id === myId);
+
             state.players.forEach((p, index) => {
                 const isMe = p.id === myId;
                 const isTurn = index === state.activeSeat && state.stage !== 'waiting' && state.stage !== 'showdown';
                 const posName = getPositionName(index, state.dealerSeat, state.players.length);
                 const posClass = getPositionClass(posName);
+                const visualSeatIndex = getVisualSeatIndex(index, state.players.length, mySeatIndex);
 
                 // 初始化借款计数（如果是新玩家）
                 if (playerLoanCount[p.id] == null) {
@@ -1803,7 +1913,7 @@
                 }
 
                 const wrapperHtml = `
-                    <div class="player-wrapper seat-${index}" data-seat="${index}">
+                    <div class="player-wrapper" style="${getPlayerSeatStyle(visualSeatIndex)}" data-seat="${visualSeatIndex}" data-player-index="${index}">
                         ${foldLabel}
                         <div class="player-box ${isTurn ? 'active-turn' : ''} ${p.folded ? 'folded' : ''} ${isMe ? 'is-me' : ''}">
                             <div class="player-avatar">${p.isHost ? '👑' : '🎮'}</div>
@@ -1828,7 +1938,7 @@
                 // 下注筹码
                 if (p.bet > 0) {
                     betArea.innerHTML += `
-                        <div class="bet-chip bet-pos-${index}">
+                        <div class="bet-chip" style="${getBetSeatStyle(visualSeatIndex)}">
                             <div class="chip-icon">$</div>
                             <span class="chip-amount">${p.bet}</span>
                         </div>
@@ -1906,6 +2016,7 @@
             const minBetValue = maxBet + minRaise;
             const maxBetValue = me.chips + me.bet;
             const bb = state.bigBlind || 20;
+            const canRaise = maxBetValue >= minBetValue;
 
             // 跟注/过牌按钮
             const callBtn = document.getElementById('btn-call-check');
@@ -1930,18 +2041,30 @@
             // 下注/加注按钮
             const raiseBtn = document.getElementById('btn-raise');
             const slider = document.getElementById('raise-slider');
-            slider.min = minBetValue;
+            slider.min = canRaise ? minBetValue : maxBetValue;
             slider.max = maxBetValue;
-            if (parseInt(slider.value) < minBetValue) slider.value = minBetValue;
+            if (parseInt(slider.value) < parseInt(slider.min)) slider.value = slider.min;
 
             updateBetFromSlider();
 
-            // 全下金额
+            raiseBtn.disabled = !canRaise;
+            slider.disabled = !canRaise;
+            const nonAllinQuickBtns = document.querySelectorAll('.quick-btn:not(.allin)');
+            nonAllinQuickBtns.forEach(button => button.disabled = !canRaise);
+
             const allinBtn = document.getElementById('btn-allin');
+            const allinQuickBtn = document.querySelector('.quick-btn.allin');
+            const canAllInRaise = maxBetValue > maxBet;
+            allinBtn.disabled = !canAllInRaise;
+            if (allinQuickBtn) allinQuickBtn.disabled = !canAllInRaise;
+
+            // 全下金额
             allinBtn.innerHTML = '全下<span class="btn-sub">' + maxBetValue + '</span>';
 
             // 范围显示
-            document.getElementById('bet-range').innerText = '范围: ' + minBetValue + ' - ' + maxBetValue;
+            document.getElementById('bet-range').innerText = canRaise
+                ? ('范围: ' + minBetValue + ' - ' + maxBetValue)
+                : ('当前无法满足最小加注（最小 ' + minBetValue + '）');
         }
 
         function updateBetFromSlider() {
@@ -1984,20 +2107,27 @@
             const bb = currentState.bigBlind || 20;
             const myBet = myPlayer.bet;
             const myChips = myPlayer.chips;
+            const minBetValue = maxBet + minRaise;
+            const maxBetValue = myBet + myChips;
+            const canRaise = maxBetValue >= minBetValue;
             let targetBet = 0;
+
+            if (type !== 'allin' && !canRaise) {
+                return;
+            }
 
             switch (type) {
                 case 'min':
-                    targetBet = maxBet + minRaise;
+                    targetBet = minBetValue;
                     break;
                 case '3bb':
-                    targetBet = Math.max(maxBet + minRaise, bb * 3);
+                    targetBet = Math.max(minBetValue, bb * 3);
                     break;
                 case '4bb':
-                    targetBet = Math.max(maxBet + minRaise, bb * 4);
+                    targetBet = Math.max(minBetValue, bb * 4);
                     break;
                 case '5bb':
-                    targetBet = Math.max(maxBet + minRaise, bb * 5);
+                    targetBet = Math.max(minBetValue, bb * 5);
                     break;
                 case 'half':
                     targetBet = maxBet + Math.floor(totalPot / 2);
@@ -2006,12 +2136,14 @@
                     targetBet = maxBet + totalPot;
                     break;
                 case 'allin':
-                    targetBet = myBet + myChips;
+                    targetBet = maxBetValue;
                     break;
             }
 
-            targetBet = Math.min(targetBet, myBet + myChips);
-            targetBet = Math.max(targetBet, maxBet + minRaise);
+            targetBet = Math.max(minBetValue, Math.min(targetBet, maxBetValue));
+            if (type === 'allin') {
+                targetBet = maxBetValue;
+            }
 
             const slider = document.getElementById('raise-slider');
             slider.value = targetBet;
@@ -2188,7 +2320,7 @@
         }
 
         function showEmojiAtSeat(seat, emoji) {
-            const target = document.querySelector(`.player-wrapper.seat-${seat}`) || document.getElementById('poker-table');
+            const target = document.querySelector(`.player-wrapper[data-player-index="${seat}"]`) || document.getElementById('poker-table');
             if (!target) return;
             const el = document.createElement('div');
             el.className = 'emoji-float';
