@@ -424,6 +424,23 @@
             font-weight: 700;
         }
 
+        .p-water {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            color: var(--muted);
+        }
+        .p-water.water-up {
+            color: #7dd3fc;
+            background: rgba(56,189,248,0.18);
+        }
+        .p-water.water-down {
+            color: #fda4af;
+            background: rgba(244,63,94,0.18);
+        }
+
         /* === 下注筹码 (牌桌上) === */
         .bet-chip {
             position: absolute;
@@ -1205,6 +1222,8 @@
         let turnTimer = null;
         let turnTimeLeft = 0;
         let isPaused = false;
+        const playerBaselineChips = {};
+        const playerLastChips = {};
 
         socket.on('connect', () => {
             myId = socket.id;
@@ -1482,6 +1501,17 @@
                 const posName = getPositionName(index, state.dealerSeat, state.players.length);
                 const posClass = getPositionClass(posName);
 
+                if (playerBaselineChips[p.id] == null) {
+                    playerBaselineChips[p.id] = p.chips;
+                }
+                if (playerLastChips[p.id] === 0 && p.chips > 0) {
+                    playerBaselineChips[p.id] = p.chips;
+                }
+                const waterDiff = p.chips - playerBaselineChips[p.id];
+                const waterClass = waterDiff >= 0 ? 'water-up' : 'water-down';
+                const waterText = waterDiff >= 0 ? `水上 +${waterDiff}` : `水下 ${waterDiff}`;
+                playerLastChips[p.id] = p.chips;
+
                 // 手牌
                 let cardsHtml = '';
                 if (p.hand && p.hand.length > 0) {
@@ -1534,6 +1564,7 @@
                                 <div class="p-bottom-row">
                                     <span class="position-badge ${posClass}">${posName}</span>
                                     <span class="p-chips">${p.chips}</span>
+                                    <span class="p-water ${waterClass}">${waterText}</span>
                                 </div>
                                 ${actionHtml}
                             </div>
