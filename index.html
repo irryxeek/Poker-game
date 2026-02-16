@@ -325,8 +325,8 @@
             background: rgba(15, 20, 35, 0.92);
             border: 2px solid rgba(255,255,255,0.15);
             border-radius: 12px;
-            padding: 8px 10px;
-            min-width: 140px;
+            padding: 7px 8px;
+            min-width: 120px;
             text-align: left;
             backdrop-filter: blur(10px);
             transition: all 0.3s;
@@ -1065,8 +1065,23 @@
             }
             .table-area { min-height: 55vh; }
             .poker-table-container { max-width: 95%; }
-            .player-box { min-width: 110px; padding: 6px 8px; }
+            .player-box { min-width: 104px; padding: 6px 6px; }
             .player-cards .card { width: 26px; height: 36px; font-size: 10px; }
+            .start-btn-container {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                margin: 10px auto 0;
+            }
+            .btn-start-game { padding: 12px 28px; font-size: 16px; }
+        }
+        @media (max-width: 520px) {
+            .players-2 .player-wrapper.seat-0 { top: -6%; }
+            .players-2 .player-wrapper.seat-1 { bottom: -6%; }
+            .players-2 .player-box { min-width: 130px; }
+            .players-3 .player-wrapper.seat-1 { bottom: -2%; right: 4%; }
+            .players-3 .player-wrapper.seat-2 { bottom: -2%; left: 4%; }
         }
     </style>
 </head>
