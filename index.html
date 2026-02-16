@@ -197,13 +197,13 @@
         /* === 底池 === */
         .pot-display {
             position: absolute;
-            top: 50%;
+            top: 61%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%);
-            padding: 10px 28px;
+            padding: 8px 22px;
             border-radius: 24px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: #fff;
             white-space: nowrap;
@@ -1051,20 +1051,20 @@
 
         .emoji-bar {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             padding: 8px 10px;
             border-top: 1px solid rgba(255,255,255,0.08);
             background: rgba(255,255,255,0.02);
             flex-wrap: wrap;
         }
         .emoji-btn {
-            width: 28px;
-            height: 28px;
+            width: 34px;
+            height: 34px;
             border-radius: 8px;
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.04);
             color: #fff;
-            font-size: 16px;
+            font-size: 20px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -1079,10 +1079,10 @@
 
         .emoji-float {
             position: absolute;
-            top: -18px;
+            top: -24px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 22px;
+            font-size: 30px;
             filter: drop-shadow(0 4px 10px rgba(0,0,0,0.45));
             animation: emoji-pop 1.6s ease forwards;
             pointer-events: none;
@@ -1125,7 +1125,7 @@
             
             /* 移动端底池位置优化 */
             .pot-display {
-                top: -10%;
+                top: 60%;
                 left: 50%;
                 transform: translate(-50%, -50%);
                 font-size: 14px;
@@ -1170,6 +1170,46 @@
             .player-cards .card { width: 22px; height: 30px; font-size: 8px; }
             .player-cards .card .card-rank { font-size: 10px; }
             .player-cards .card .card-suit { font-size: 11px; }
+
+            /* 移动端多人拥挤模式（7-9人） */
+            .players-crowded .player-box {
+                min-width: 72px;
+                padding: 4px 5px;
+                gap: 3px;
+                border-radius: 9px;
+            }
+            .players-crowded .player-avatar {
+                width: 20px;
+                height: 20px;
+                font-size: 10px;
+            }
+            .players-crowded .p-name {
+                font-size: 9px;
+                max-width: 36px;
+            }
+            .players-crowded .p-chips { font-size: 10px; }
+            .players-crowded .position-badge {
+                font-size: 7px;
+                padding: 1px 3px;
+            }
+            .players-crowded .player-cards .card {
+                width: 18px;
+                height: 25px;
+                font-size: 7px;
+            }
+            .players-crowded .player-cards .card .card-rank { font-size: 8px; }
+            .players-crowded .player-cards .card .card-suit { font-size: 9px; }
+
+            .table-crowded .chip-icon {
+                width: 20px;
+                height: 20px;
+                font-size: 7px;
+                border-width: 2px;
+            }
+            .table-crowded .chip-amount {
+                font-size: 10px;
+                padding: 2px 5px;
+            }
             
             /* 移动端开始按钮 */
             .start-btn-container { bottom: 8%; }
@@ -1651,15 +1691,15 @@
         function getSeatCoordinates(isMobile = false) {
             if (isMobile) {
                 return {
-                    0: { x: 50, y: -14 },
-                    1: { x: 68, y: -8 },
-                    2: { x: 85, y: 8 },
-                    3: { x: 90, y: 34 },
-                    4: { x: 78, y: 78 },
-                    5: { x: 50, y: 96 },
-                    6: { x: 22, y: 78 },
-                    7: { x: 10, y: 34 },
-                    8: { x: 15, y: 8 }
+                    0: { x: 50, y: -18 },
+                    1: { x: 76, y: -8 },
+                    2: { x: 92, y: 16 },
+                    3: { x: 90, y: 43 },
+                    4: { x: 74, y: 82 },
+                    5: { x: 50, y: 100 },
+                    6: { x: 26, y: 82 },
+                    7: { x: 10, y: 43 },
+                    8: { x: 8, y: 16 }
                 };
             }
             return {
@@ -1678,15 +1718,15 @@
         function getBetCoordinates(isMobile = false) {
             if (isMobile) {
                 return {
-                    0: { x: 50, y: 14 },
-                    1: { x: 63, y: 18 },
-                    2: { x: 74, y: 28 },
-                    3: { x: 76, y: 46 },
-                    4: { x: 64, y: 62 },
-                    5: { x: 50, y: 68 },
-                    6: { x: 36, y: 62 },
-                    7: { x: 24, y: 46 },
-                    8: { x: 26, y: 28 }
+                    0: { x: 50, y: 18 },
+                    1: { x: 66, y: 22 },
+                    2: { x: 76, y: 32 },
+                    3: { x: 76, y: 50 },
+                    4: { x: 64, y: 66 },
+                    5: { x: 50, y: 72 },
+                    6: { x: 36, y: 66 },
+                    7: { x: 24, y: 50 },
+                    8: { x: 24, y: 32 }
                 };
             }
             return {
@@ -1856,10 +1896,11 @@
             const pArea = document.getElementById('players-area');
             const betArea = document.getElementById('bet-chips-area');
             const pokerTable = document.getElementById('poker-table');
+            const isCrowded = state.players.length >= 7;
             pArea.innerHTML = '';
             betArea.innerHTML = '';
-            pArea.className = `players-${state.players.length}`;
-            pokerTable.className = `poker-table table-players-${state.players.length}`;
+            pArea.className = `players-${state.players.length}${isCrowded ? ' players-crowded' : ''}`;
+            pokerTable.className = `poker-table table-players-${state.players.length}${isCrowded ? ' table-crowded' : ''}`;
 
             const mySeatIndex = state.players.findIndex(player => player.id === myId);
 
@@ -1966,6 +2007,7 @@
 
             turnTimeLeft = 30;
             timerEl.innerText = turnTimeLeft + 's';
+            let timeoutActionSent = false;
 
             turnTimer = setInterval(() => {
                 turnTimeLeft--;
@@ -1977,6 +2019,16 @@
                 if (turnTimeLeft <= 0) {
                     clearInterval(turnTimer);
                     turnTimer = null;
+
+                    if (timeoutActionSent || !currentState) return;
+                    if (currentState.stage === 'waiting' || currentState.stage === 'showdown') return;
+
+                    const stillActivePlayer = currentState.players[currentState.activeSeat];
+                    const isMyTurn = stillActivePlayer && stillActivePlayer.id === myId;
+                    if (isMyTurn && !myPlayer?.folded) {
+                        timeoutActionSent = true;
+                        socket.emit('action', { type: 'fold' });
+                    }
                 }
             }, 1000);
         }
@@ -2310,7 +2362,7 @@
             popup.classList.toggle('open');
         }
 
-        const EMOJI_LIST = ['😀','😎','🤔','😭','😡','👍','👎','🎉'];
+        const EMOJI_LIST = ['😀','😎','🤔','😭','😡','🤯','🥳','🤣','😴','🤩','🥶','🙌','👍','👎','🔥','💰','❤️','🎉'];
 
         function initEmojiBar() {
             const bar = document.getElementById('emoji-bar');

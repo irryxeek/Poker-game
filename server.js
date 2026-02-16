@@ -395,7 +395,7 @@ io.on('connection', (socket) => {
     socket.on('emoji', (emoji) => {
         const playerIndex = gameState.players.findIndex(p => p.id === socket.id);
         if (playerIndex < 0) return;
-        const safeList = ['😀','😎','🤔','😭','😡','👍','👎','🎉'];
+        const safeList = ['😀','😎','🤔','😭','😡','🤯','🥳','🤣','😴','🤩','🥶','🙌','👍','👎','🔥','💰','❤️','🎉'];
         if (!safeList.includes(emoji)) return;
         io.emit('emoji', {
             seat: playerIndex,
