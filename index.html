@@ -168,6 +168,7 @@
             width: 90%;
             max-width: 850px;
             aspect-ratio: 1.8 / 1;
+            filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
         }
         .poker-table {
             position: absolute;
@@ -176,19 +177,21 @@
             transform: translate(-50%, -50%);
             width: 80%;
             height: 70%;
-            background: linear-gradient(180deg, #1a2231 0%, #242f44 30%, #1a2231 100%);
+            background: linear-gradient(180deg, #1e2a3a 0%, #2a3b52 30%, #1e2a3a 100%);
             border-radius: 50%;
-            border: 8px solid #2b364a;
+            border: 8px solid #334155;
             box-shadow:
-                inset 0 0 60px rgba(0,0,0,0.3),
-                0 0 0 4px #0b0f16,
-                0 8px 30px rgba(0,0,0,0.6);
+                inset 0 0 80px rgba(0,0,0,0.4),
+                inset 0 4px 20px rgba(255,255,255,0.05),
+                0 0 0 4px #0f172a,
+                0 12px 40px rgba(0,0,0,0.7);
         }
         .table-felt {
             position: absolute;
             top: 10px; left: 10px; right: 10px; bottom: 10px;
             border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.08);
+            border: 2px solid rgba(89, 211, 255, 0.12);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         /* === 底池 === */
@@ -197,19 +200,20 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.75);
-            padding: 8px 24px;
-            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%);
+            padding: 10px 28px;
+            border-radius: 24px;
             font-size: 16px;
             font-weight: bold;
             color: #fff;
             white-space: nowrap;
             z-index: 15;
-            border: 1px solid rgba(255,255,255,0.2);
-            backdrop-filter: blur(8px);
+            border: 2px solid rgba(89, 211, 255, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 20px rgba(89, 211, 255, 0.15);
         }
-        .pot-label { color: #ccc; }
-        .pot-amount { color: #fff; }
+        .pot-label { color: #94a3b8; font-size: 14px; }
+        .pot-amount { color: #59d3ff; font-size: 18px; margin-left: 4px; text-shadow: 0 0 10px rgba(89, 211, 255, 0.5); }
 
         /* === 公共牌 === */
         #community-cards {
@@ -226,7 +230,7 @@
         .card {
             width: 48px;
             height: 66px;
-            background: #fff;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             border-radius: 6px;
             display: inline-flex;
             flex-direction: column;
@@ -234,13 +238,13 @@
             justify-content: center;
             font-weight: bold;
             font-size: 16px;
-            box-shadow: 1px 2px 6px rgba(0,0,0,0.4);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.3);
             position: relative;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             line-height: 1.1;
-            border: 1px solid #ddd;
+            border: 1px solid #e2e8f0;
         }
-        .card:hover { transform: translateY(-3px); }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.6); }
         .card .card-rank { font-size: 17px; font-weight: 800; }
         .card .card-suit { font-size: 18px; margin-top: -2px; }
         .card.red { color: #d32f2f; }
@@ -264,7 +268,13 @@
         }
         .card.my-card {
             border: 2px solid var(--accent);
-            box-shadow: 0 0 8px rgba(89, 211, 255, 0.35);
+            box-shadow: 0 0 12px rgba(89, 211, 255, 0.5), 0 2px 8px rgba(0,0,0,0.5);
+            animation: card-glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes card-glow {
+            0%, 100% { box-shadow: 0 0 12px rgba(89, 211, 255, 0.5), 0 2px 8px rgba(0,0,0,0.5); }
+            50% { box-shadow: 0 0 20px rgba(89, 211, 255, 0.7), 0 2px 8px rgba(0,0,0,0.5); }
         }
 
         /* 社区牌稍大 */
@@ -322,31 +332,33 @@
 
         /* === 玩家卡片 === */
         .player-box {
-            background: rgba(15, 20, 35, 0.95);
-            border: 2px solid rgba(255,255,255,0.15);
-            border-radius: 12px;
-            padding: 7px 8px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 2px solid rgba(100, 116, 139, 0.3);
+            border-radius: 14px;
+            padding: 8px 10px;
             min-width: 120px;
             text-align: left;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3);
         }
         .player-box.active-turn {
             border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(89, 211, 255, 0.45), 0 0 40px rgba(89, 211, 255, 0.12);
-            background: rgba(89, 211, 255, 0.08);
+            box-shadow: 0 0 24px rgba(89, 211, 255, 0.6), 0 0 48px rgba(89, 211, 255, 0.2), 0 4px 12px rgba(0,0,0,0.5);
+            background: linear-gradient(135deg, rgba(89, 211, 255, 0.15) 0%, rgba(59, 130, 246, 0.12) 100%);
+            transform: scale(1.02);
         }
         .player-box.folded {
             opacity: 0.45;
             filter: grayscale(80%);
         }
         .player-box.is-me {
-            background: rgba(89, 211, 255, 0.06);
-            border-color: rgba(89, 211, 255, 0.4);
+            background: linear-gradient(135deg, rgba(89, 211, 255, 0.18) 0%, rgba(59, 130, 246, 0.15) 100%);
+            border-color: rgba(89, 211, 255, 0.5);
+            box-shadow: 0 0 16px rgba(89, 211, 255, 0.3), 0 4px 12px rgba(0,0,0,0.5);
         }
 
         /* 玩家头像区 */
@@ -360,6 +372,8 @@
             justify-content: center;
             font-size: 14px;
             flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
         .player-info {
             flex: 1;
@@ -396,7 +410,7 @@
         .player-cards .card .card-rank { font-size: 13px; }
         .player-cards .card .card-suit { font-size: 14px; }
 
-        /* 位置徽章 + 筹码行 */
+        /* === 位置徽章 + 筹码行 === */
         .p-bottom-row {
             display: flex;
             align-items: center;
@@ -404,26 +418,28 @@
             margin-top: 3px;
         }
         .position-badge {
-            padding: 1px 6px;
-            border-radius: 3px;
+            padding: 2px 7px;
+            border-radius: 4px;
             font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.5px;
             color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
-        .pos-btn { background: #475569; }
-        .pos-sb { background: #38bdf8; }
-        .pos-bb { background: #fb7185; }
-        .pos-utg { background: #64748b; }
-        .pos-mp { background: #818cf8; }
-        .pos-hj { background: #818cf8; }
-        .pos-co { background: #94a3b8; }
-        .pos-dealer { background: #22d3ee; }
+        .pos-btn { background: linear-gradient(135deg, #475569 0%, #64748b 100%); }
+        .pos-sb { background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%); box-shadow: 0 2px 6px rgba(56, 189, 248, 0.4); }
+        .pos-bb { background: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%); box-shadow: 0 2px 6px rgba(251, 113, 133, 0.4); }
+        .pos-utg { background: linear-gradient(135deg, #64748b 0%, #475569 100%); }
+        .pos-mp { background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%); }
+        .pos-hj { background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%); }
+        .pos-co { background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); }
+        .pos-dealer { background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%); box-shadow: 0 2px 6px rgba(34, 211, 238, 0.4); }
 
         .p-chips {
-            color: #fff;
+            color: #fbbf24;
             font-size: 12px;
             font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .p-loan {
@@ -461,25 +477,26 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #334155 0%, #1f2937 100%);
-            border: 3px solid #fff;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border: 3px solid #fef3c7;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
+            font-size: 10px;
             font-weight: bold;
-            color: #fff;
-            box-shadow: 1px 2px 4px rgba(0,0,0,0.4);
+            color: #78350f;
+            box-shadow: 0 3px 8px rgba(251, 191, 36, 0.5), 0 1px 3px rgba(0,0,0,0.4);
         }
         .chip-amount {
-            background: rgba(0,0,0,0.85);
-            padding: 3px 8px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            padding: 4px 10px;
+            border-radius: 12px;
             font-size: 12px;
             font-weight: 700;
-            color: var(--accent);
+            color: #fbbf24;
             white-space: nowrap;
-            border: 1px solid rgba(89,211,255,0.3);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
         }
 
         /* 筹码位置 - 6人 */
@@ -572,22 +589,30 @@
         /* start-btn-container moved to above bet-chip */
         .btn-start-game {
             padding: 14px 40px;
-            background: linear-gradient(135deg, #4c9bff 0%, #59d3ff 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             border: none;
             color: white;
-            border-radius: 25px;
+            border-radius: 28px;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(89,211,255,0.35);
-            transition: all 0.2s;
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4), 0 2px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(147, 197, 253, 0.3);
         }
-        .btn-start-game:hover { transform: scale(1.08); box-shadow: 0 6px 25px rgba(89,211,255,0.55); }
+        .btn-start-game:hover { 
+            transform: translateY(-2px) scale(1.05); 
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.6), 0 4px 12px rgba(0,0,0,0.4); 
+        }
+        .btn-start-game:active {
+            transform: translateY(0) scale(1.02);
+        }
         .btn-start-game:disabled {
-            background: #555;
+            background: linear-gradient(135deg, #475569 0%, #334155 100%);
             cursor: not-allowed;
             box-shadow: none;
             transform: none;
+            opacity: 0.6;
         }
 
         /* === 右侧边栏 === */
@@ -1078,10 +1103,13 @@
             /* 移动端底池位置优化 */
             .pot-display {
                 top: 50%;
-                font-size: 14px;
-                padding: 6px 18px;
+                font-size: 15px;
+                padding: 8px 22px;
                 z-index: 20;
             }
+            
+            .pot-label { font-size: 13px; }
+            .pot-amount { font-size: 17px; }
             
             /* 移动端公共牌位置优化 */
             #community-cards {
@@ -1099,28 +1127,45 @@
             /* 移动端玩家框优化 */
             .player-box { 
                 min-width: 85px; 
-                padding: 4px 5px; 
+                padding: 5px 6px; 
                 gap: 4px; 
-                border-radius: 8px;
+                border-radius: 10px;
                 font-size: 11px;
             }
-            .player-avatar { width: 22px; height: 22px; font-size: 10px; }
+            .player-avatar { 
+                width: 24px; 
+                height: 24px; 
+                font-size: 11px;
+                border-width: 1.5px;
+            }
             .p-name { font-size: 10px; max-width: 45px; }
-            .p-chips { font-size: 10px; }
+            .p-chips { font-size: 11px; }
             .p-loan { display: none; }
-            .position-badge { font-size: 8px; padding: 1px 3px; }
+            .position-badge { font-size: 8px; padding: 1px 4px; }
             .player-cards .card { width: 22px; height: 30px; font-size: 8px; }
             .player-cards .card .card-rank { font-size: 10px; }
             .player-cards .card .card-suit { font-size: 11px; }
             
             /* 移动端开始按钮 */
             .start-btn-container { bottom: 8%; }
-            .btn-start-game { padding: 8px 20px; font-size: 14px; }
+            .btn-start-game { 
+                padding: 10px 28px; 
+                font-size: 16px;
+                border-radius: 24px;
+            }
 
             /* 移动端筹码位置优化 */
             .bet-chip { z-index: 12; }
-            .chip-icon { width: 22px; height: 22px; font-size: 7px; border-width: 2px; }
-            .chip-amount { font-size: 10px; padding: 1px 4px; }
+            .chip-icon { 
+                width: 24px; 
+                height: 24px; 
+                font-size: 8px; 
+                border-width: 2px; 
+            }
+            .chip-amount { 
+                font-size: 11px; 
+                padding: 2px 6px; 
+            }
 
             /* 移动端 2人 */
             .players-2 .player-wrapper.seat-0 { top: -16%; }
@@ -1552,17 +1597,25 @@
             currentState = state;
             myPlayer = state.players.find(p => p.id === myId);
 
-            // 检测新局
+            // 检测新局开始 - 清除结算画面
             if (state.stage === 'preflop' && prevStage !== 'preflop') {
                 handCount++;
                 document.getElementById('hand-number').innerText = handCount;
                 currentWinners = null;
-                document.getElementById('winner-overlay')?.remove();
+                removeWinnerOverlay();
             }
+            
+            // 回到等待状态 - 清除结算画面
             if (state.stage === 'waiting' && prevStage !== 'waiting') {
                 currentWinners = null;
-                document.getElementById('winner-overlay')?.remove();
+                removeWinnerOverlay();
             }
+            
+            // 任何阶段变化都尝试清除结算画面（除了showdown）
+            if (state.stage !== 'showdown' && prevStage === 'showdown') {
+                removeWinnerOverlay();
+            }
+            
             prevStage = state.stage;
 
             // 更新标题
@@ -1632,13 +1685,28 @@
                 const posName = getPositionName(index, state.dealerSeat, state.players.length);
                 const posClass = getPositionClass(posName);
 
+                // 借款逻辑修正：只在新局开始时（preflop阶段）检测
+                if (state.stage === 'preflop') {
+                    // 初始化借款计数
+                    if (playerLoanCount[p.id] == null) {
+                        playerLoanCount[p.id] = 0;
+                    }
+                    
+                    // 检测是否发生借款：上一局结束时筹码为0，本局有筹码
+                    if (playerLastChips[p.id] != null && playerLastChips[p.id] === 0 && p.chips > 0) {
+                        playerLoanCount[p.id] += 1;
+                    }
+                }
+                
+                // 在waiting阶段更新最后筹码记录
+                if (state.stage === 'waiting') {
+                    playerLastChips[p.id] = p.chips;
+                }
+                
+                // 初始化借款计数（如果是新玩家）
                 if (playerLoanCount[p.id] == null) {
                     playerLoanCount[p.id] = 0;
                 }
-                if (playerLastChips[p.id] != null && playerLastChips[p.id] <= 0 && p.chips > 0) {
-                    playerLoanCount[p.id] += 1;
-                }
-                playerLastChips[p.id] = p.chips;
 
                 // 手牌
                 let cardsHtml = '';
@@ -1960,7 +2028,9 @@
         });
 
         function showWinnerOverlay(msgHtml) {
-            if (document.getElementById('winner-overlay')) return;
+            // 先移除旧的结算画面
+            removeWinnerOverlay();
+            
             const div = document.createElement('div');
             div.id = 'winner-overlay';
             div.style.cssText = `
@@ -1984,6 +2054,18 @@
                 style.innerHTML = `@keyframes popin { from { transform: translate(-50%, -50%) scale(0.3); opacity:0;} to { transform: translate(-50%, -50%) scale(1); opacity:1;} }`;
                 document.head.appendChild(style);
             }
+            
+            // 5秒后自动移除
+            setTimeout(() => {
+                removeWinnerOverlay();
+            }, 5000);
+        }
+        
+        function removeWinnerOverlay() {
+            const overlay = document.getElementById('winner-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
         }
 
         function applyWinningEffects(winnerInfo) {
@@ -1999,6 +2081,12 @@
                     }
                 });
             });
+            
+            // 10秒后清除获胜特效
+            setTimeout(() => {
+                const cards = Array.from(document.querySelectorAll('.card'));
+                cards.forEach(c => c.classList.remove('winning-card'));
+            }, 10000);
         }
 
         // ========================================
@@ -2070,3 +2158,4 @@
     </script>
 </body>
 </html>
+
