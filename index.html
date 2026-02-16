@@ -1069,20 +1069,48 @@
                 border-top: 1px solid rgba(255,255,255,0.08);
             }
             .table-area { min-height: 55vh; }
-            .poker-table-container { max-width: 95%; }
-            .player-box { min-width: 104px; padding: 6px 6px; }
-            .player-cards .card { width: 26px; height: 36px; font-size: 10px; }
-            .start-btn-container {
-                bottom: 12%;
-            }
-            .btn-start-game { padding: 12px 28px; font-size: 16px; }
-        }
-        @media (max-width: 520px) {
-            .players-2 .player-wrapper.seat-0 { top: -10%; }
-            .players-2 .player-wrapper.seat-1 { bottom: -10%; }
-            .players-3 .player-wrapper.seat-0 { top: -10%; }
-            .players-3 .player-wrapper.seat-1 { bottom: -4%; right: 2%; }
-            .players-3 .player-wrapper.seat-2 { bottom: -4%; left: 2%; }
+            .poker-table-container { max-width: 92%; }
+            .player-box { min-width: 90px; padding: 5px 6px; gap: 5px; border-radius: 8px; }
+            .player-avatar { width: 24px; height: 24px; font-size: 11px; }
+            .p-name { font-size: 11px; max-width: 50px; }
+            .p-chips { font-size: 11px; }
+            .p-loan { display: none; }
+            .position-badge { font-size: 9px; padding: 1px 4px; }
+            .player-cards .card { width: 24px; height: 34px; font-size: 9px; }
+            .player-cards .card .card-rank { font-size: 11px; }
+            .player-cards .card .card-suit { font-size: 12px; }
+            .start-btn-container { bottom: 10%; }
+            .btn-start-game { padding: 10px 24px; font-size: 15px; }
+
+            /* 移动端 2人 */
+            .players-2 .player-wrapper.seat-0 { top: -14%; }
+            .players-2 .player-wrapper.seat-1 { bottom: -14%; }
+
+            /* 移动端 3人 */
+            .players-3 .player-wrapper.seat-0 { top: -14%; }
+            .players-3 .player-wrapper.seat-1 { bottom: -8%; right: 2%; }
+            .players-3 .player-wrapper.seat-2 { bottom: -8%; left: 2%; }
+
+            /* 移动端 4人 */
+            .players-4 .player-wrapper.seat-0 { top: -14%; }
+            .players-4 .player-wrapper.seat-1 { top: 30%; right: -6%; }
+            .players-4 .player-wrapper.seat-2 { bottom: -14%; }
+            .players-4 .player-wrapper.seat-3 { top: 30%; left: -6%; }
+
+            /* 移动端 5人 */
+            .players-5 .player-wrapper.seat-0 { top: -14%; }
+            .players-5 .player-wrapper.seat-1 { top: 10%; right: -8%; }
+            .players-5 .player-wrapper.seat-2 { bottom: -10%; right: 8%; }
+            .players-5 .player-wrapper.seat-3 { bottom: -10%; left: 8%; }
+            .players-5 .player-wrapper.seat-4 { top: 10%; left: -8%; }
+
+            /* 移动端 6人 */
+            .player-wrapper.seat-0 { top: -14%; }
+            .player-wrapper.seat-1 { top: 8%; right: -8%; }
+            .player-wrapper.seat-2 { bottom: 8%; right: -8%; }
+            .player-wrapper.seat-3 { bottom: -14%; }
+            .player-wrapper.seat-4 { bottom: 8%; left: -8%; }
+            .player-wrapper.seat-5 { top: 8%; left: -8%; }
         }
     </style>
 </head>
