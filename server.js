@@ -129,19 +129,22 @@ function startNewRound() {
 }
 
 function getNextActiveSeat(currentSeat) {
+    const n = gameState.players.length;
     let next = currentSeat;
     let count = 0;
-    const n = gameState.players.length;
+
     do {
         next = (next + 1) % n;
         count++;
         const p = gameState.players[next];
+        // 只有未弃牌且还有筹码的玩家才能行动
         if (!p.folded && p.chips > 0) {
             return next;
         }
     } while (count < n);
-    
-    return next; 
+
+    // 如果没有找到可行动的玩家，返回 -1 表示无人可行动
+    return -1;
 }
 
 function checkRoundEnd() {
@@ -195,15 +198,21 @@ function nextStage() {
 
     const n = gameState.players.length;
     let firstSeat;
-    
+
     if (n === 2) {
         firstSeat = gameState.dealerSeat;
     } else {
         firstSeat = (gameState.dealerSeat + 1) % n;
     }
-    
-    gameState.activeSeat = getNextActiveSeat((firstSeat + n - 1) % n);
-    
+
+    const nextSeat = getNextActiveSeat((firstSeat + n - 1) % n);
+    if (nextSeat === -1) {
+        // 没有可行动的玩家，继续推进阶段
+        nextStage();
+        return;
+    }
+    gameState.activeSeat = nextSeat;
+
     io.emit('update_state', gameState);
 }
 
@@ -224,16 +233,17 @@ function advanceStageLogic() {
 
 function calculateWinner() {
     let activeCandidates = gameState.players.filter(p => !p.folded);
-    
+
     activeCandidates.forEach(p => {
         const fullHand = p.hand.concat(gameState.communityCards);
         p.solvedHand = Hand.solve(fullHand);
     });
 
+    // 使用稳定排序：按牌力从强到弱排序
     activeCandidates.sort((a, b) => {
-        const res = Hand.winners([a.solvedHand, b.solvedHand]);
-        if (res.length === 2) return 0;
-        return res[0] === a.solvedHand ? -1 : 1; 
+        // 比较两手牌，返回 -1 表示 a 更强，1 表示 b 更强，0 表示相等
+        const cmp = a.solvedHand.compare(b.solvedHand);
+        return -cmp; // 降序排列（最强的在前）
     });
 
     let winnerInfo = [];
@@ -247,12 +257,15 @@ function calculateWinner() {
     });
 
     while (gameState.pot > 0 && activeCandidates.length > 0) {
+        // 找出当前最强的所有玩家（可能平局）
         let winners = [activeCandidates[0]];
         for (let i = 1; i < activeCandidates.length; i++) {
-            const res = Hand.winners([activeCandidates[0].solvedHand, activeCandidates[i].solvedHand]);
-            if (res.length === 2) { 
+            const cmp = activeCandidates[0].solvedHand.compare(activeCandidates[i].solvedHand);
+            if (cmp === 0) {
+                // 平局，加入赢家列表
                 winners.push(activeCandidates[i]);
             } else {
+                // 后面的牌力更弱，停止
                 break;
             }
         }
@@ -483,8 +496,14 @@ io.on('connection', (socket) => {
         }
 
         if (!checkRoundEnd()) {
-            gameState.activeSeat = getNextActiveSeat(gameState.activeSeat);
-            io.emit('update_state', gameState);
+            const nextSeat = getNextActiveSeat(gameState.activeSeat);
+            if (nextSeat === -1) {
+                // 没有可行动的玩家，直接进入下一阶段
+                nextStage();
+            } else {
+                gameState.activeSeat = nextSeat;
+                io.emit('update_state', gameState);
+            }
         }
     });
 
@@ -517,14 +536,19 @@ io.on('connection', (socket) => {
 
         if (!player.folded) {
             player.folded = true;
-            
+
             if (checkRoundEnd()) {
                 return;
             }
 
             if (pIndex === gameState.activeSeat) {
-                gameState.activeSeat = getNextActiveSeat(gameState.activeSeat);
-                io.emit('update_state', gameState);
+                const nextSeat = getNextActiveSeat(gameState.activeSeat);
+                if (nextSeat === -1) {
+                    nextStage();
+                } else {
+                    gameState.activeSeat = nextSeat;
+                    io.emit('update_state', gameState);
+                }
             } else {
                 io.emit('update_state', gameState);
             }
